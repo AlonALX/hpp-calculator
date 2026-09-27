@@ -1,50 +1,182 @@
 // ========================================
 // HPP CALCULATOR
-// STEP 7.3
-// Ingredient Calculator + Unit Conversion
+// STEP 8A.3
+// Display + Modal Architecture
 // ========================================
 
 
 // ========================================
-// ELEMENT
+// APP STATE
 // ========================================
 
-const ingredientsContainer =
-    document.getElementById("ingredients");
+const state = {
 
-const addIngredientButton =
-    document.getElementById("addIngredient");
+    product: {
+        name: "",
+        yieldQuantity: 0,
+        yieldUnit: "pcs"
+    },
+
+    ingredients: [],
+
+    additionalCost: 0
+
+};
+
+
+// ID bahan yang sedang diedit
+
+let editingIngredientId = null;
+
+
+// ========================================
+// DOM ELEMENTS
+// ========================================
+
+// Product
+
+const productDisplay =
+    document.getElementById("productDisplay");
+
+const addProductButton =
+    document.getElementById("addProductButton");
+
+const editProductButton =
+    document.getElementById("editProductButton");
+
+const productModal =
+    document.getElementById("productModal");
+
+const productModalTitle =
+    document.getElementById("productModalTitle");
+
+const productNameInput =
+    document.getElementById("productNameInput");
 
 const yieldQuantityInput =
-    document.getElementById("yieldQuantity");
+    document.getElementById("yieldQuantityInput");
+
+const yieldUnitInput =
+    document.getElementById("yieldUnitInput");
+
+const saveProductButton =
+    document.getElementById("saveProductButton");
+
+
+// Ingredients
+
+const ingredientsDisplay =
+    document.getElementById("ingredientsDisplay");
+
+const addIngredientButton =
+    document.getElementById("addIngredientButton");
+
+const ingredientModal =
+    document.getElementById("ingredientModal");
+
+const ingredientModalTitle =
+    document.getElementById("ingredientModalTitle");
+
+const ingredientNameInput =
+    document.getElementById("ingredientNameInput");
+
+const ingredientPriceInput =
+    document.getElementById("ingredientPriceInput");
+
+const ingredientPurchaseQuantityInput =
+    document.getElementById(
+        "ingredientPurchaseQuantityInput"
+    );
+
+const ingredientPurchaseUnitInput =
+    document.getElementById(
+        "ingredientPurchaseUnitInput"
+    );
+
+const ingredientUsageQuantityInput =
+    document.getElementById(
+        "ingredientUsageQuantityInput"
+    );
+
+const ingredientUsageUnitInput =
+    document.getElementById(
+        "ingredientUsageUnitInput"
+    );
+
+const ingredientCalculationPreview =
+    document.getElementById(
+        "ingredientCalculationPreview"
+    );
+
+const ingredientValidationMessage =
+    document.getElementById(
+        "ingredientValidationMessage"
+    );
+
+const saveIngredientButton =
+    document.getElementById(
+        "saveIngredientButton"
+    );
+
+const deleteIngredientButton =
+    document.getElementById(
+        "deleteIngredientButton"
+    );
+
+
+// Additional Cost
+
+const additionalCostDisplay =
+    document.getElementById(
+        "additionalCostDisplay"
+    );
+
+const addAdditionalCostButton =
+    document.getElementById(
+        "addAdditionalCostButton"
+    );
+
+const additionalCostModal =
+    document.getElementById(
+        "additionalCostModal"
+    );
+
+const additionalCostInput =
+    document.getElementById(
+        "additionalCostInput"
+    );
+
+const saveAdditionalCostButton =
+    document.getElementById(
+        "saveAdditionalCostButton"
+    );
+
+
+// Result
 
 const totalIngredientCostElement =
-    document.getElementById("totalIngredientCost");
+    document.getElementById(
+        "totalIngredientCost"
+    );
+
+const totalAdditionalCostElement =
+    document.getElementById(
+        "totalAdditionalCost"
+    );
 
 const totalProductionCostElement =
-    document.getElementById("totalProductionCost");
+    document.getElementById(
+        "totalProductionCost"
+    );
 
 const hppPerUnitElement =
-    document.getElementById("hppPerUnit");
+    document.getElementById(
+        "hppPerUnit"
+    );
 
 
 // ========================================
-// UNIT SYSTEM
-// ========================================
-//
-// baseUnit digunakan untuk menyamakan
-// satuan sebelum melakukan perhitungan.
-//
-// Berat:
-// kg -> g
-//
-// Volume:
-// L -> ml
-//
-// Jumlah:
-// pcs -> pcs
-// unit -> pcs
-// butir -> pcs
+// UNIT DEFINITIONS
 // ========================================
 
 const UNIT_DEFINITIONS = {
@@ -90,6 +222,7 @@ const UNIT_DEFINITIONS = {
         baseUnit: "pcs",
         multiplier: 1
     }
+
 };
 
 
@@ -102,31 +235,44 @@ function formatRupiah(value) {
     const number = Number(value) || 0;
 
     return new Intl.NumberFormat("id-ID", {
+
         style: "currency",
+
         currency: "IDR",
+
         maximumFractionDigits: 0
+
     }).format(number);
+
 }
 
 
 // ========================================
-// CONVERT TO BASE UNIT
+// UNIT CONVERSION
 // ========================================
 
-function convertToBaseUnit(quantity, unit) {
+function convertToBaseUnit(
+    quantity,
+    unit
+) {
 
-    const definition = UNIT_DEFINITIONS[unit];
+    const definition =
+        UNIT_DEFINITIONS[unit];
 
     if (!definition) {
         return null;
     }
 
-    return Number(quantity) * definition.multiplier;
+    return (
+        Number(quantity) *
+        definition.multiplier
+    );
+
 }
 
 
 // ========================================
-// CEK KOMPATIBILITAS UNIT
+// UNIT COMPATIBILITY
 // ========================================
 
 function areUnitsCompatible(
@@ -134,268 +280,45 @@ function areUnitsCompatible(
     usageUnit
 ) {
 
-    const purchaseDefinition =
+    const purchase =
         UNIT_DEFINITIONS[purchaseUnit];
 
-    const usageDefinition =
+    const usage =
         UNIT_DEFINITIONS[usageUnit];
 
-    if (!purchaseDefinition || !usageDefinition) {
+    if (!purchase || !usage) {
         return false;
     }
 
     return (
-        purchaseDefinition.category ===
-        usageDefinition.category
+        purchase.category ===
+        usage.category
     );
+
 }
 
 
 // ========================================
-// BUAT SELECT UNIT
+// CALCULATE INGREDIENT COST
 // ========================================
 
-function createUnitOptions() {
-
-    return `
-        <option value="kg">kg</option>
-        <option value="g">g</option>
-        <option value="L">L</option>
-        <option value="ml">ml</option>
-        <option value="pcs">pcs</option>
-        <option value="unit">unit</option>
-        <option value="butir">butir</option>
-    `;
-}
-
-
-// ========================================
-// TAMBAH BAHAN
-// ========================================
-
-function addIngredient() {
-
-    const card =
-        document.createElement("div");
-
-    card.className = "ingredient-card";
-
-    card.innerHTML = `
-
-        <h3>Bahan</h3>
-
-        <div class="form-group">
-
-            <label>
-                Nama bahan
-            </label>
-
-            <input
-                type="text"
-                class="ingredient-name"
-                placeholder="Contoh: Tepung"
-            >
-
-        </div>
-
-
-        <div class="ingredient-purchase">
-
-            <div class="form-group">
-
-                <label>
-                    Harga beli
-                </label>
-
-                <input
-                    type="number"
-                    class="ingredient-price"
-                    min="0"
-                    step="any"
-                    inputmode="decimal"
-                    placeholder="Contoh: 15000"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Jumlah beli
-                </label>
-
-                <input
-                    type="number"
-                    class="ingredient-purchase-quantity"
-                    min="0"
-                    step="any"
-                    inputmode="decimal"
-                    placeholder="1"
-                >
-
-            </div>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Unit pembelian
-            </label>
-
-            <select class="ingredient-purchase-unit">
-
-                ${createUnitOptions()}
-
-            </select>
-
-        </div>
-
-
-        <div class="ingredient-usage">
-
-            <div class="form-group">
-
-                <label>
-                    Jumlah digunakan
-                </label>
-
-                <input
-                    type="number"
-                    class="ingredient-usage-quantity"
-                    min="0"
-                    step="any"
-                    inputmode="decimal"
-                    placeholder="Contoh: 250"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Unit penggunaan
-                </label>
-
-                <select class="ingredient-usage-unit">
-
-                    ${createUnitOptions()}
-
-                </select>
-
-            </div>
-
-        </div>
-
-
-        <div class="ingredient-cost">
-
-            <span>
-                Biaya bahan
-            </span>
-
-            <strong class="ingredient-cost-value">
-                Rp0
-            </strong>
-
-        </div>
-
-
-        <div
-            class="ingredient-status"
-            style="
-                display:none;
-                margin-top:8px;
-                color:#b91c1c;
-                font-size:13px;
-            "
-        ></div>
-
-
-        <button
-            type="button"
-            class="remove-button"
-        >
-            Hapus bahan
-        </button>
-
-    `;
-
-
-    ingredientsContainer.appendChild(card);
-
-    calculateAll();
-}
-
-
-// ========================================
-// HITUNG BIAYA SATU BAHAN
-// ========================================
-
-function calculateIngredient(card) {
-
-    const priceInput =
-        card.querySelector(".ingredient-price");
-
-    const purchaseQuantityInput =
-        card.querySelector(
-            ".ingredient-purchase-quantity"
-        );
-
-    const purchaseUnitInput =
-        card.querySelector(
-            ".ingredient-purchase-unit"
-        );
-
-    const usageQuantityInput =
-        card.querySelector(
-            ".ingredient-usage-quantity"
-        );
-
-    const usageUnitInput =
-        card.querySelector(
-            ".ingredient-usage-unit"
-        );
-
-    const costElement =
-        card.querySelector(
-            ".ingredient-cost-value"
-        );
-
-    const statusElement =
-        card.querySelector(
-            ".ingredient-status"
-        );
-
+function calculateIngredientCost(
+    ingredient
+) {
 
     const price =
-        Number(priceInput.value) || 0;
+        Number(ingredient.purchasePrice) || 0;
 
     const purchaseQuantity =
-        Number(purchaseQuantityInput.value) || 0;
+        Number(
+            ingredient.purchaseQuantity
+        ) || 0;
 
     const usageQuantity =
-        Number(usageQuantityInput.value) || 0;
+        Number(
+            ingredient.usageQuantity
+        ) || 0;
 
-    const purchaseUnit =
-        purchaseUnitInput.value;
-
-    const usageUnit =
-        usageUnitInput.value;
-
-
-    // Reset status
-
-    statusElement.style.display = "none";
-    statusElement.textContent = "";
-
-    costElement.textContent = "Rp0";
-
-
-    // Belum lengkap
 
     if (
         price <= 0 ||
@@ -408,43 +331,34 @@ function calculateIngredient(card) {
     }
 
 
-    // Cek unit
-
     if (
         !areUnitsCompatible(
-            purchaseUnit,
-            usageUnit
+            ingredient.purchaseUnit,
+            ingredient.usageUnit
         )
     ) {
 
-        statusElement.textContent =
-            "Unit pembelian dan unit penggunaan tidak kompatibel.";
-
-        statusElement.style.display = "block";
-
         return 0;
 
     }
 
 
-    // Convert ke base unit
-
-    const purchaseBaseQuantity =
+    const purchaseBase =
         convertToBaseUnit(
             purchaseQuantity,
-            purchaseUnit
+            ingredient.purchaseUnit
         );
 
-    const usageBaseQuantity =
+    const usageBase =
         convertToBaseUnit(
             usageQuantity,
-            usageUnit
+            ingredient.usageUnit
         );
 
 
     if (
-        purchaseBaseQuantity <= 0 ||
-        usageBaseQuantity <= 0
+        purchaseBase <= 0 ||
+        usageBase <= 0
     ) {
 
         return 0;
@@ -452,172 +366,782 @@ function calculateIngredient(card) {
     }
 
 
-    // ====================================
-    // FORMULA HPP BAHAN
-    // ====================================
-    //
-    // Harga beli
-    // ÷ jumlah pembelian
-    // × jumlah penggunaan
-    //
-    // ====================================
+    return (
+        price /
+        purchaseBase
+    ) * usageBase;
 
-    const cost =
-        (
-            price /
-            purchaseBaseQuantity
-        ) *
-        usageBaseQuantity;
-
-
-    costElement.textContent =
-        formatRupiah(cost);
-
-
-    return cost;
 }
 
 
 // ========================================
-// HITUNG SEMUA
+// TOTAL INGREDIENT COST
 // ========================================
 
-function calculateAll() {
+function getTotalIngredientCost() {
 
-    const cards =
-        document.querySelectorAll(
-            ".ingredient-card"
-        );
+    return state.ingredients.reduce(
 
-    let totalIngredientCost = 0;
+        (total, ingredient) => {
 
+            return (
+                total +
+                calculateIngredientCost(
+                    ingredient
+                )
+            );
 
-    cards.forEach(card => {
+        },
 
-        totalIngredientCost +=
-            calculateIngredient(card);
+        0
 
-    });
+    );
 
-
-    // Total biaya bahan
-
-    totalIngredientCostElement.textContent =
-        formatRupiah(totalIngredientCost);
+}
 
 
-    // Yield
+// ========================================
+// TOTAL PRODUCTION COST
+// ========================================
+
+function getTotalProductionCost() {
+
+    return (
+        getTotalIngredientCost() +
+        Number(state.additionalCost || 0)
+    );
+
+}
+
+
+// ========================================
+// HPP PER UNIT
+// ========================================
+
+function getHppPerUnit() {
 
     const yieldQuantity =
-        Number(yieldQuantityInput.value) || 0;
+        Number(
+            state.product.yieldQuantity
+        ) || 0;
 
 
-    // Untuk sekarang additional cost = 0
-    //
-    // Gas, listrik, packaging, dan labor
-    // akan kita tambahkan pada tahap berikutnya.
+    if (yieldQuantity <= 0) {
+        return 0;
+    }
 
-    const totalProductionCost =
-        totalIngredientCost;
+
+    return (
+        getTotalProductionCost() /
+        yieldQuantity
+    );
+
+}
+
+
+// ========================================
+// MODAL HELPERS
+// ========================================
+
+function openModal(modal) {
+
+    modal.classList.remove("hidden");
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
+}
+
+
+function closeModal(modal) {
+
+    modal.classList.add("hidden");
+
+    document.body.classList.remove(
+        "modal-open"
+    );
+
+}
+
+
+// ========================================
+// PRODUCT DISPLAY
+// ========================================
+
+function renderProduct() {
+
+    const hasProduct =
+        state.product.name.trim() !== "";
+
+
+    if (!hasProduct) {
+
+        editProductButton.style.display =
+            "none";
+
+
+        productDisplay.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    +
+                </div>
+
+                <strong>
+                    Belum ada produk
+                </strong>
+
+                <p>
+                    Tambahkan nama produk
+                    untuk memulai.
+                </p>
+
+                <button
+                    type="button"
+                    id="emptyAddProductButton"
+                    class="button primary"
+                >
+                    + Tambah Produk
+                </button>
+
+            </div>
+
+        `;
+
+
+        const button =
+            document.getElementById(
+                "emptyAddProductButton"
+            );
+
+
+        button.addEventListener(
+            "click",
+            openAddProductModal
+        );
+
+
+        return;
+
+    }
+
+
+    editProductButton.style.display =
+        "block";
+
+
+    productDisplay.innerHTML = `
+
+        <div class="product-display-card">
+
+            <div>
+
+                <div class="product-name">
+                    ${escapeHtml(
+                        state.product.name
+                    )}
+                </div>
+
+                <div class="product-yield">
+                    ${formatNumber(
+                        state.product.yieldQuantity
+                    )}
+                    ${escapeHtml(
+                        state.product.yieldUnit
+                    )}
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="edit-text-button"
+                id="productDisplayEditButton"
+            >
+                Edit
+            </button>
+
+        </div>
+
+    `;
+
+
+    document
+        .getElementById(
+            "productDisplayEditButton"
+        )
+        .addEventListener(
+            "click",
+            openEditProductModal
+        );
+
+}
+
+
+// ========================================
+// INGREDIENT DISPLAY
+// ========================================
+
+function renderIngredients() {
+
+    if (state.ingredients.length === 0) {
+
+        ingredientsDisplay.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    +
+                </div>
+
+                <strong>
+                    Belum ada bahan
+                </strong>
+
+                <p>
+                    Tambahkan bahan yang
+                    digunakan dalam resep.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    const list =
+        document.createElement("div");
+
+    list.className =
+        "ingredient-list";
+
+
+    state.ingredients.forEach(
+        ingredient => {
+
+            const cost =
+                calculateIngredientCost(
+                    ingredient
+                );
+
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "ingredient-item";
+
+
+            item.innerHTML = `
+
+                <div class="ingredient-main">
+
+                    <div>
+
+                        <div
+                            class="ingredient-name-display"
+                        >
+                            ${escapeHtml(
+                                ingredient.name
+                            )}
+                        </div>
+
+                        <div
+                            class="ingredient-usage-display"
+                        >
+                            Digunakan:
+                            ${formatNumber(
+                                ingredient.usageQuantity
+                            )}
+                            ${escapeHtml(
+                                ingredient.usageUnit
+                            )}
+                        </div>
+
+                        <div
+                            class="ingredient-cost-display"
+                        >
+                            ${formatRupiah(cost)}
+                        </div>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="ingredient-edit-button"
+                        data-id="${ingredient.id}"
+                    >
+                        Edit
+                    </button>
+
+                </div>
+
+            `;
+
+
+            list.appendChild(item);
+
+        }
+    );
+
+
+    ingredientsDisplay.innerHTML = "";
+
+    ingredientsDisplay.appendChild(list);
+
+
+    ingredientsDisplay
+        .querySelectorAll(
+            ".ingredient-edit-button"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                function() {
+
+                    openEditIngredientModal(
+                        button.dataset.id
+                    );
+
+                }
+            );
+
+        });
+
+}
+
+
+// ========================================
+// ADDITIONAL COST DISPLAY
+// ========================================
+
+function renderAdditionalCost() {
+
+    const cost =
+        Number(state.additionalCost) || 0;
+
+
+    if (cost <= 0) {
+
+        additionalCostDisplay.innerHTML = `
+
+            <div class="empty-state compact">
+
+                <strong>
+                    Belum ada biaya tambahan
+                </strong>
+
+                <p>
+                    Gas, listrik, packaging,
+                    dan labor dapat ditambahkan.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    additionalCostDisplay.innerHTML = `
+
+        <div class="product-display-card">
+
+            <div>
+
+                <div class="ingredient-name-display">
+                    Biaya tambahan
+                </div>
+
+                <div class="ingredient-usage-display">
+                    Simple Mode
+                </div>
+
+                <div class="ingredient-cost-display">
+                    ${formatRupiah(cost)}
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="edit-text-button"
+                id="editAdditionalCostButton"
+            >
+                Edit
+            </button>
+
+        </div>
+
+    `;
+
+
+    document
+        .getElementById(
+            "editAdditionalCostButton"
+        )
+        .addEventListener(
+            "click",
+            openEditAdditionalCostModal
+        );
+
+}
+
+
+// ========================================
+// RENDER RESULTS
+// ========================================
+
+function renderResults() {
+
+    const ingredientCost =
+        getTotalIngredientCost();
+
+    const additionalCost =
+        Number(state.additionalCost) || 0;
+
+    const productionCost =
+        ingredientCost +
+        additionalCost;
+
+    const hppPerUnit =
+        getHppPerUnit();
+
+
+    totalIngredientCostElement.textContent =
+        formatRupiah(
+            ingredientCost
+        );
+
+
+    totalAdditionalCostElement.textContent =
+        formatRupiah(
+            additionalCost
+        );
 
 
     totalProductionCostElement.textContent =
-        formatRupiah(totalProductionCost);
+        formatRupiah(
+            productionCost
+        );
 
 
-    // HPP per unit
-
-    if (yieldQuantity > 0) {
-
-        const hppPerUnit =
-            totalProductionCost /
-            yieldQuantity;
-
-        hppPerUnitElement.textContent =
-            formatRupiah(hppPerUnit);
-
-    } else {
-
-        hppPerUnitElement.textContent =
-            "Rp0";
-
-    }
+    hppPerUnitElement.textContent =
+        formatRupiah(
+            hppPerUnit
+        );
 
 }
 
 
 // ========================================
-// EVENT: TAMBAH BAHAN
+// RENDER EVERYTHING
 // ========================================
 
-addIngredientButton.addEventListener(
-    "click",
-    addIngredient
-);
+function renderApp() {
 
+    renderProduct();
 
-// ========================================
-// EVENT: INPUT / SELECT
-// ========================================
+    renderIngredients();
 
-ingredientsContainer.addEventListener(
-    "input",
-    calculateAll
-);
+    renderAdditionalCost();
 
-ingredientsContainer.addEventListener(
-    "change",
-    calculateAll
-);
+    renderResults();
 
-yieldQuantityInput.addEventListener(
-    "input",
-    calculateAll
-);
+}
 
 
 // ========================================
-// EVENT: HAPUS BAHAN
+// PRODUCT MODAL
 // ========================================
 
-ingredientsContainer.addEventListener(
-    "click",
-    function(event) {
+function openAddProductModal() {
 
-        if (
-            event.target.classList.contains(
-                "remove-button"
-            )
-        ) {
+    productModalTitle.textContent =
+        "Tambah Produk";
 
-            const card =
-                event.target.closest(
-                    ".ingredient-card"
-                );
 
-            if (card) {
+    productNameInput.value =
+        state.product.name;
 
-                card.remove();
 
-                calculateAll();
+    yieldQuantityInput.value =
+        state.product.yieldQuantity || "";
 
-            }
 
-        }
+    yieldUnitInput.value =
+        state.product.yieldUnit || "pcs";
+
+
+    openModal(productModal);
+
+    setTimeout(
+        () => productNameInput.focus(),
+        100
+    );
+
+}
+
+
+function openEditProductModal() {
+
+    productModalTitle.textContent =
+        "Edit Produk";
+
+
+    productNameInput.value =
+        state.product.name;
+
+
+    yieldQuantityInput.value =
+        state.product.yieldQuantity || "";
+
+
+    yieldUnitInput.value =
+        state.product.yieldUnit || "pcs";
+
+
+    openModal(productModal);
+
+}
+
+
+function saveProduct() {
+
+    const name =
+        productNameInput.value.trim();
+
+
+    const yieldQuantity =
+        Number(
+            yieldQuantityInput.value
+        ) || 0;
+
+
+    if (name === "") {
+
+        alert(
+            "Nama produk belum diisi."
+        );
+
+        productNameInput.focus();
+
+        return;
 
     }
-);
+
+
+    if (yieldQuantity <= 0) {
+
+        alert(
+            "Jumlah hasil harus lebih dari 0."
+        );
+
+        yieldQuantityInput.focus();
+
+        return;
+
+    }
+
+
+    state.product = {
+
+        name,
+
+        yieldQuantity,
+
+        yieldUnit:
+            yieldUnitInput.value
+
+    };
+
+
+    closeModal(productModal);
+
+    renderApp();
+
+}
 
 
 // ========================================
-// BAHAN PERTAMA
+// INGREDIENT MODAL
 // ========================================
 
-addIngredient();
+function resetIngredientModal() {
+
+    editingIngredientId = null;
 
 
-// ========================================
-// INITIAL CALCULATION
-// ========================================
+    ingredientNameInput.value = "";
 
-calculateAll();
+    ingredientPriceInput.value = "";
+
+    ingredientPurchaseQuantityInput.value =
+        "";
+
+    ingredientPurchaseUnitInput.value =
+        "kg";
+
+    ingredientUsageQuantityInput.value =
+        "";
+
+    ingredientUsageUnitInput.value =
+        "g";
+
+
+    ingredientCalculationPreview.innerHTML =
+        "Biaya bahan: <strong>Rp0</strong>";
+
+
+    ingredientValidationMessage.textContent =
+        "";
+
+    ingredientValidationMessage.classList.add(
+        "hidden"
+    );
+
+
+    deleteIngredientButton.classList.add(
+        "hidden"
+    );
+
+}
+
+
+function openAddIngredientModal() {
+
+    resetIngredientModal();
+
+
+    ingredientModalTitle.textContent =
+        "Tambah Bahan";
+
+
+    openModal(ingredientModal);
+
+    setTimeout(
+        () => ingredientNameInput.focus(),
+        100
+    );
+
+}
+
+
+function openEditIngredientModal(id) {
+
+    const ingredient =
+        state.ingredients.find(
+            item => String(item.id) === String(id)
+        );
+
+
+    if (!ingredient) {
+        return;
+    }
+
+
+    editingIngredientId =
+        ingredient.id;
+
+
+    ingredientModalTitle.textContent =
+        "Edit Bahan";
+
+
+    ingredientNameInput.value =
+        ingredient.name;
+
+
+    ingredientPriceInput.value =
+        ingredient.purchasePrice;
+
+
+    ingredientPurchaseQuantityInput.value =
+        ingredient.purchaseQuantity;
+
+
+    ingredientPurchaseUnitInput.value =
+        ingredient.purchaseUnit;
+
+
+    ingredientUsageQuantityInput.value =
+        ingredient.usageQuantity;
+
+
+    ingredientUsageUnitInput.value =
+        ingredient.usageUnit;
+
+
+    deleteIngredientButton.classList.remove(
+        "hidden"
+    );
+
+
+    updateIngredientPreview();
+
+
+    openModal(ingredientModal);
+
+}
+
+
+function getIngredientFormData() {
+
+    return {
+
+        name:
+            ingredientNameInput.value.trim(),
+
+        purchasePrice:
+            Number(
+                ingredientPriceInput.value
+            ) || 0,
+
+        purchaseQuantity:
+            Number(
+                ingredientPurchaseQuantityInput.value
+            ) || 0,
+
+        purchaseUnit:
+            ingredientPurchaseUnitInput.value,
+
+        usageQuantity:
+            Number(
+                ingredientUsageQuantityInput.value
+            ) || 0,
+
+        usageUnit:
+            ingredientUsageUnitInput.value
+
+    };
+
+}
+
+
+function validateIngredient(data) {
+
+    if (!data.name) {
+
+        return "Nama bahan belum diisi.";
+
+    }
+
+
+    if (data.purchasePrice <= 0) {
+
+        return "Harga beli harus lebih dari 0.";
+
+    }
+
+
+    if (data.purchaseQuantity <= 0) {
+
+        return "Jumlah pembelian harus lebih dari 0.
