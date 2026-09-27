@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
 
@@ -20,23 +21,35 @@
 
 <body>
 
+    <!-- HEADER -->
     <header class="header">
+
         <div class="container">
+
             <h1>HPP Calculator</h1>
+
             <p>
-                Hitung modal produk, harga jual, dan batas diskon.
+                Hitung modal produk, harga jual,
+                dan batas diskon.
             </p>
+
         </div>
+
     </header>
 
 
     <main class="container">
+
+        <!-- ============================= -->
+        <!-- PRODUK -->
+        <!-- ============================= -->
 
         <section class="card">
 
             <h2>Produk</h2>
 
             <div class="form-group">
+
                 <label for="productName">
                     Nama produk
                 </label>
@@ -46,44 +59,28 @@
                     id="productName"
                     placeholder="Contoh: Brownies Coklat"
                 >
+
             </div>
 
         </section>
 
+
+        <!-- ============================= -->
+        <!-- BAHAN -->
+        <!-- ============================= -->
 
         <section class="card">
 
             <h2>Bahan</h2>
 
             <p class="helper-text">
-                Tambahkan bahan yang digunakan untuk membuat produk.
+                Masukkan jumlah bahan yang dibeli
+                dan jumlah yang digunakan dalam resep.
             </p>
 
             <div id="ingredients">
 
-                <div class="ingredient-row">
-
-                    <input
-                        type="text"
-                        placeholder="Nama bahan"
-                        class="ingredient-name"
-                    >
-
-                    <input
-                        type="number"
-                        placeholder="Harga beli"
-                        class="ingredient-price"
-                        min="0"
-                    >
-
-                    <input
-                        type="number"
-                        placeholder="Jumlah dipakai"
-                        class="ingredient-quantity"
-                        min="0"
-                    >
-
-                </div>
+                <!-- Bahan pertama dibuat oleh JavaScript -->
 
             </div>
 
@@ -98,24 +95,60 @@
         </section>
 
 
+        <!-- ============================= -->
+        <!-- YIELD -->
+        <!-- ============================= -->
+
         <section class="card">
 
-            <h2>Hasil</h2>
+            <h2>Hasil Produksi</h2>
 
-            <div class="result-box">
+            <p class="helper-text">
+                Berapa banyak produk yang dihasilkan
+                dari resep/batch ini?
+            </p>
 
-                <div class="result-item">
-                    <span>Total Biaya Bahan</span>
-                    <strong id="totalIngredientCost">
-                        Rp0
-                    </strong>
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="yieldQuantity">
+                        Jumlah hasil
+                    </label>
+
+                    <input
+                        type="number"
+                        id="yieldQuantity"
+                        min="0"
+                        step="any"
+                        placeholder="Contoh: 20"
+                    >
+
                 </div>
 
-                <div class="result-item">
-                    <span>HPP per Unit</span>
-                    <strong id="hppPerUnit">
-                        Rp0
-                    </strong>
+
+                <div class="form-group">
+
+                    <label for="yieldUnit">
+                        Satuan
+                    </label>
+
+                    <select id="yieldUnit">
+
+                        <option value="pcs">
+                            pcs
+                        </option>
+
+                        <option value="unit">
+                            unit
+                        </option>
+
+                        <option value="butir">
+                            butir
+                        </option>
+
+                    </select>
+
                 </div>
 
             </div>
@@ -123,8 +156,80 @@
         </section>
 
 
+        <!-- ============================= -->
+        <!-- HASIL HPP -->
+        <!-- ============================= -->
+
+        <section class="card">
+
+            <h2>Hasil HPP</h2>
+
+            <div class="result-box">
+
+                <div class="result-item">
+
+                    <span>
+                        Total Biaya Bahan
+                    </span>
+
+                    <strong id="totalIngredientCost">
+                        Rp0
+                    </strong>
+
+                </div>
+
+
+                <div class="result-item">
+
+                    <span>
+                        Total HPP Produksi
+                    </span>
+
+                    <strong id="totalProductionCost">
+                        Rp0
+                    </strong>
+
+                </div>
+
+
+                <div class="result-item highlight">
+
+                    <span>
+                        HPP per Unit
+                    </span>
+
+                    <strong id="hppPerUnit">
+                        Rp0
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ============================= -->
+        <!-- INFORMASI -->
+        <!-- ============================= -->
+
+        <section class="info-box">
+
+            <strong>
+                Catatan HPP
+            </strong>
+
+            <p>
+                HPP saat ini dihitung berdasarkan
+                biaya yang sudah Anda masukkan.
+            </p>
+
+        </section>
+
     </main>
 
+
+    <!-- FOOTER -->
 
     <footer class="footer">
 
@@ -142,4 +247,5 @@
     <script src="app.js"></script>
 
 </body>
+
 </html>
