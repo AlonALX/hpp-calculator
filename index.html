@@ -19,9 +19,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
+
 <body>
 
+    <!-- ================================= -->
     <!-- HEADER -->
+    <!-- ================================= -->
+
     <header class="header">
 
         <div class="container">
@@ -40,54 +44,123 @@
 
     <main class="container">
 
-        <!-- ============================= -->
+
+        <!-- ================================= -->
         <!-- PRODUK -->
-        <!-- ============================= -->
+        <!-- ================================= -->
 
         <section class="card">
 
-            <h2>Produk</h2>
+            <div class="section-header">
 
-            <div class="form-group">
+                <div>
 
-                <label for="productName">
-                    Nama produk
-                </label>
+                    <span class="section-label">
+                        PRODUK
+                    </span>
 
-                <input
-                    type="text"
-                    id="productName"
-                    placeholder="Contoh: Brownies Coklat"
+                    <h2>Informasi Produk</h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    id="editProductButton"
+                    class="icon-button"
+                    aria-label="Edit produk"
                 >
+                    ✎
+                </button>
+
+            </div>
+
+
+            <div
+                id="productDisplay"
+                class="display-area"
+            >
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        +
+                    </div>
+
+                    <strong>
+                        Belum ada produk
+                    </strong>
+
+                    <p>
+                        Tambahkan nama produk
+                        untuk memulai.
+                    </p>
+
+                    <button
+                        type="button"
+                        id="addProductButton"
+                        class="button primary"
+                    >
+                        + Tambah Produk
+                    </button>
+
+                </div>
 
             </div>
 
         </section>
 
 
-        <!-- ============================= -->
+
+        <!-- ================================= -->
         <!-- BAHAN -->
-        <!-- ============================= -->
+        <!-- ================================= -->
 
         <section class="card">
 
-            <h2>Bahan</h2>
+            <div class="section-header">
 
-            <p class="helper-text">
-                Masukkan jumlah bahan yang dibeli
-                dan jumlah yang digunakan dalam resep.
-            </p>
+                <div>
 
-            <div id="ingredients">
+                    <span class="section-label">
+                        BAHAN
+                    </span>
 
-                <!-- Bahan pertama dibuat oleh JavaScript -->
+                    <h2>Bahan Produk</h2>
+
+                </div>
 
             </div>
 
+
+            <div
+                id="ingredientsDisplay"
+                class="display-area"
+            >
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        +
+                    </div>
+
+                    <strong>
+                        Belum ada bahan
+                    </strong>
+
+                    <p>
+                        Tambahkan bahan yang
+                        digunakan dalam resep.
+                    </p>
+
+                </div>
+
+            </div>
+
+
             <button
                 type="button"
-                id="addIngredient"
-                class="button secondary"
+                id="addIngredientButton"
+                class="button secondary full-width"
             >
                 + Tambah Bahan
             </button>
@@ -95,76 +168,77 @@
         </section>
 
 
-        <!-- ============================= -->
-        <!-- YIELD -->
-        <!-- ============================= -->
+
+        <!-- ================================= -->
+        <!-- BIAYA TAMBAHAN -->
+        <!-- ================================= -->
 
         <section class="card">
 
-            <h2>Hasil Produksi</h2>
+            <div class="section-header">
 
-            <p class="helper-text">
-                Berapa banyak produk yang dihasilkan
-                dari resep/batch ini?
-            </p>
+                <div>
 
-            <div class="form-row">
+                    <span class="section-label">
+                        BIAYA TAMBAHAN
+                    </span>
 
-                <div class="form-group">
-
-                    <label for="yieldQuantity">
-                        Jumlah hasil
-                    </label>
-
-                    <input
-                        type="number"
-                        id="yieldQuantity"
-                        min="0"
-                        step="any"
-                        placeholder="Contoh: 20"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="yieldUnit">
-                        Satuan
-                    </label>
-
-                    <select id="yieldUnit">
-
-                        <option value="pcs">
-                            pcs
-                        </option>
-
-                        <option value="unit">
-                            unit
-                        </option>
-
-                        <option value="butir">
-                            butir
-                        </option>
-
-                    </select>
+                    <h2>Biaya Produksi Lainnya</h2>
 
                 </div>
 
             </div>
 
+
+            <div
+                id="additionalCostDisplay"
+                class="display-area"
+            >
+
+                <div class="empty-state compact">
+
+                    <strong>
+                        Belum ada biaya tambahan
+                    </strong>
+
+                    <p>
+                        Gas, listrik, packaging,
+                        dan labor dapat ditambahkan
+                        nanti.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="addAdditionalCostButton"
+                class="button secondary full-width"
+            >
+                + Tambah Biaya
+            </button>
+
         </section>
 
 
-        <!-- ============================= -->
+
+        <!-- ================================= -->
         <!-- HASIL HPP -->
-        <!-- ============================= -->
+        <!-- ================================= -->
 
-        <section class="card">
+        <section class="card result-card">
 
-            <h2>Hasil HPP</h2>
+            <span class="section-label">
+                HASIL
+            </span>
+
+            <h2>HPP Produk</h2>
+
 
             <div class="result-box">
+
 
                 <div class="result-item">
 
@@ -173,6 +247,19 @@
                     </span>
 
                     <strong id="totalIngredientCost">
+                        Rp0
+                    </strong>
+
+                </div>
+
+
+                <div class="result-item">
+
+                    <span>
+                        Biaya Tambahan
+                    </span>
+
+                    <strong id="totalAdditionalCost">
                         Rp0
                     </strong>
 
@@ -206,30 +293,469 @@
 
             </div>
 
-        </section>
 
-
-        <!-- ============================= -->
-        <!-- INFORMASI -->
-        <!-- ============================= -->
-
-        <section class="info-box">
-
-            <strong>
-                Catatan HPP
-            </strong>
-
-            <p>
+            <div
+                id="hppNote"
+                class="result-note"
+            >
                 HPP saat ini dihitung berdasarkan
                 biaya yang sudah Anda masukkan.
-            </p>
+            </div>
 
         </section>
+
 
     </main>
 
 
-    <!-- FOOTER -->
+
+    <!-- ================================= -->
+    <!-- PRODUCT MODAL -->
+    <!-- ================================= -->
+
+    <div
+        id="productModal"
+        class="modal hidden"
+    >
+
+        <div class="modal-overlay"></div>
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h2 id="productModalTitle">
+                    Tambah Produk
+                </h2>
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    data-close-modal="productModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="form-group">
+
+                    <label for="productNameInput">
+                        Nama produk
+                    </label>
+
+                    <input
+                        type="text"
+                        id="productNameInput"
+                        placeholder="Contoh: Brownies Coklat"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="yieldQuantityInput">
+                        Jumlah hasil
+                    </label>
+
+                    <input
+                        type="number"
+                        id="yieldQuantityInput"
+                        min="0"
+                        step="any"
+                        inputmode="decimal"
+                        placeholder="Contoh: 20"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="yieldUnitInput">
+                        Satuan hasil
+                    </label>
+
+                    <select id="yieldUnitInput">
+
+                        <option value="pcs">
+                            pcs
+                        </option>
+
+                        <option value="unit">
+                            unit
+                        </option>
+
+                        <option value="butir">
+                            butir
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="button secondary"
+                    data-close-modal="productModal"
+                >
+                    Batal
+                </button>
+
+                <button
+                    type="button"
+                    id="saveProductButton"
+                    class="button primary"
+                >
+                    Simpan
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- INGREDIENT MODAL -->
+    <!-- ================================= -->
+
+    <div
+        id="ingredientModal"
+        class="modal hidden"
+    >
+
+        <div class="modal-overlay"></div>
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h2 id="ingredientModalTitle">
+                    Tambah Bahan
+                </h2>
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    data-close-modal="ingredientModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+
+                <div class="form-group">
+
+                    <label for="ingredientNameInput">
+                        Nama bahan
+                    </label>
+
+                    <input
+                        type="text"
+                        id="ingredientNameInput"
+                        placeholder="Contoh: Tepung"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="ingredientPriceInput">
+                        Harga beli
+                    </label>
+
+                    <input
+                        type="number"
+                        id="ingredientPriceInput"
+                        min="0"
+                        step="any"
+                        inputmode="decimal"
+                        placeholder="Contoh: 15000"
+                    >
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="ingredientPurchaseQuantityInput">
+                            Jumlah beli
+                        </label>
+
+                        <input
+                            type="number"
+                            id="ingredientPurchaseQuantityInput"
+                            min="0"
+                            step="any"
+                            inputmode="decimal"
+                            placeholder="1"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="ingredientPurchaseUnitInput">
+                            Unit
+                        </label>
+
+                        <select id="ingredientPurchaseUnitInput">
+
+                            <option value="kg">
+                                kg
+                            </option>
+
+                            <option value="g">
+                                g
+                            </option>
+
+                            <option value="L">
+                                L
+                            </option>
+
+                            <option value="ml">
+                                ml
+                            </option>
+
+                            <option value="pcs">
+                                pcs
+                            </option>
+
+                            <option value="unit">
+                                unit
+                            </option>
+
+                            <option value="butir">
+                                butir
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="ingredientUsageQuantityInput">
+                            Jumlah digunakan
+                        </label>
+
+                        <input
+                            type="number"
+                            id="ingredientUsageQuantityInput"
+                            min="0"
+                            step="any"
+                            inputmode="decimal"
+                            placeholder="250"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="ingredientUsageUnitInput">
+                            Unit
+                        </label>
+
+                        <select id="ingredientUsageUnitInput">
+
+                            <option value="kg">
+                                kg
+                            </option>
+
+                            <option value="g">
+                                g
+                            </option>
+
+                            <option value="L">
+                                L
+                            </option>
+
+                            <option value="ml">
+                                ml
+                            </option>
+
+                            <option value="pcs">
+                                pcs
+                            </option>
+
+                            <option value="unit">
+                                unit
+                            </option>
+
+                            <option value="butir">
+                                butir
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="ingredientCalculationPreview"
+                    class="calculation-preview"
+                >
+
+                    Biaya bahan: <strong>Rp0</strong>
+
+                </div>
+
+
+                <div
+                    id="ingredientValidationMessage"
+                    class="validation-message hidden"
+                ></div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="button secondary"
+                    data-close-modal="ingredientModal"
+                >
+                    Batal
+                </button>
+
+                <button
+                    type="button"
+                    id="deleteIngredientButton"
+                    class="button danger hidden"
+                >
+                    Hapus
+                </button>
+
+                <button
+                    type="button"
+                    id="saveIngredientButton"
+                    class="button primary"
+                >
+                    Simpan
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- ADDITIONAL COST MODAL -->
+    <!-- ================================= -->
+
+    <div
+        id="additionalCostModal"
+        class="modal hidden"
+    >
+
+        <div class="modal-overlay"></div>
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h2>
+                    Tambah Biaya
+                </h2>
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    data-close-modal="additionalCostModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <p class="helper-text">
+                    Untuk tahap ini kita gunakan
+                    Simple Mode. Detailed / Guided
+                    akan ditambahkan setelah struktur
+                    dasarnya selesai.
+                </p>
+
+
+                <div class="form-group">
+
+                    <label for="additionalCostInput">
+                        Total biaya tambahan
+                    </label>
+
+                    <input
+                        type="number"
+                        id="additionalCostInput"
+                        min="0"
+                        step="any"
+                        inputmode="decimal"
+                        placeholder="Contoh: 10000"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="button secondary"
+                    data-close-modal="additionalCostModal"
+                >
+                    Batal
+                </button>
+
+                <button
+                    type="button"
+                    id="saveAdditionalCostButton"
+                    class="button primary"
+                >
+                    Simpan
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
 
     <footer class="footer">
 
@@ -242,6 +768,7 @@
         </div>
 
     </footer>
+
 
 
     <script src="app.js"></script>
