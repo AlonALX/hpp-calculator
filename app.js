@@ -1913,68 +1913,180 @@ function getHppPerUnit() {
 
 
     // ========================================
-    // ADDITIONAL COST MODAL
-    // ========================================
+// ADDITIONAL COST MODAL
+// ========================================
 
-    function openAddAdditionalCostModal() {
-
-        if (!additionalCostModal) {
-            return;
-        }
+let selectedAdditionalCostMode = "simple";
 
 
-        additionalCostInput.value =
-            state.additionalCost || "";
+function updateAdditionalCostModalMode() {
 
+    const simpleFields =
+        document.getElementById(
+            "simpleAdditionalCostFields"
+        );
 
-        openModal(
-            additionalCostModal
+    const detailedFields =
+        document.getElementById(
+            "detailedAdditionalCostFields"
+        );
+
+    const modeInput =
+        document.getElementById(
+            "additionalCostModeInput"
         );
 
 
-        setTimeout(
-            function () {
+    if (modeInput) {
 
-                if (additionalCostInput) {
+        modeInput.value =
+            selectedAdditionalCostMode;
 
-                    additionalCostInput.focus();
+    }
 
-                }
 
-            },
-            100
+    if (simpleFields) {
+
+        simpleFields.classList.toggle(
+            "hidden",
+            selectedAdditionalCostMode !== "simple"
         );
 
     }
 
 
-    function openEditAdditionalCostModal() {
+    if (detailedFields) {
 
-        if (!additionalCostModal) {
-            return;
-        }
-
-
-        additionalCostInput.value =
-            state.additionalCost || "";
-
-
-        openModal(
-            additionalCostModal
+        detailedFields.classList.toggle(
+            "hidden",
+            selectedAdditionalCostMode !== "detailed"
         );
 
     }
 
+}
 
-    function saveAdditionalCost() {
 
-        const value =
+function openAddAdditionalCostModal() {
+
+    if (!additionalCostModal) {
+        return;
+    }
+
+
+    const additionalCosts =
+        state.additionalCosts;
+
+
+    selectedAdditionalCostMode =
+        additionalCosts?.mode === "detailed"
+            ? "detailed"
+            : "simple";
+
+
+    if (additionalCostInput) {
+
+        const simpleTotal =
             Number(
-                additionalCostInput.value
+                additionalCosts?.simple?.total
             ) || 0;
 
 
-        if (value < 0) {
+        additionalCostInput.value =
+            simpleTotal > 0
+                ? simpleTotal
+                : "";
+
+    }
+
+
+    updateAdditionalCostModalMode();
+
+
+    openModal(
+        additionalCostModal
+    );
+
+
+    setTimeout(
+        function () {
+
+            if (
+                selectedAdditionalCostMode === "simple" &&
+                additionalCostInput
+            ) {
+
+                additionalCostInput.focus();
+
+            }
+
+        },
+        100
+    );
+
+}
+
+
+function openEditAdditionalCostModal() {
+
+    openAddAdditionalCostModal();
+
+}
+
+
+function saveAdditionalCost() {
+
+    const mode =
+        selectedAdditionalCostMode === "detailed"
+            ? "detailed"
+            : "simple";
+
+
+    const currentAdditionalCosts =
+        state.additionalCosts || {};
+
+
+    /*
+     * Pastikan struktur selalu lengkap.
+     *
+     * Nilai mode yang tidak aktif
+     * TIDAK dihapus.
+     */
+
+    const simpleTotal =
+        Number(
+            currentAdditionalCosts
+                .simple?.total
+        ) || 0;
+
+
+    const detailed =
+        currentAdditionalCosts.detailed || {
+            gas: null,
+            electricity: null,
+            packaging: null,
+            labor: null
+        };
+
+
+    /*
+     * Jika Simple aktif,
+     * ambil nilai dari input.
+     */
+
+    let newSimpleTotal =
+        simpleTotal;
+
+
+    if (mode === "simple") {
+
+        newSimpleTotal =
+            Number(
+                additionalCostInput?.value
+            ) || 0;
+
+
+        if (newSimpleTotal < 0) {
 
             alert(
                 "Biaya tambahan tidak boleh negatif."
@@ -1984,24 +2096,59 @@ function getHppPerUnit() {
 
         }
 
-
-        state.additionalCost =
-            value;
-
-
-        saveState();
-
-
-        closeModal(
-            additionalCostModal
-        );
-
-
-        renderApp();
-
     }
 
 
+    /*
+     * Jika Detailed aktif,
+     * untuk tahap sekarang belum ada
+     * komponen biaya yang diedit.
+     *
+     * Semua data Detailed yang sudah ada
+     * tetap dipertahankan.
+     */
+
+    state.additionalCosts = {
+
+        mode: mode,
+
+        simple: {
+
+            total:
+                newSimpleTotal
+
+        },
+
+        detailed: {
+
+            gas:
+                detailed.gas || null,
+
+            electricity:
+                detailed.electricity || null,
+
+            packaging:
+                detailed.packaging || null,
+
+            labor:
+                detailed.labor || null
+
+        }
+
+    };
+
+
+    saveState();
+
+
+    closeModal(
+        additionalCostModal
+    );
+
+
+    renderApp();
+
+}
     // ========================================
     // MODAL CLOSE BUTTONS
     // ========================================
