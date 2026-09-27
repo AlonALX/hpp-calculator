@@ -33,6 +33,8 @@ document.addEventListener("DOMContentLoaded", function () {
 };
 
 
+    // Membaca state dari localStorage dan melakukan migrasi data versi lama.
+
     function loadState() {
 
     try {
@@ -170,6 +172,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 }
 
+
+    // Menyimpan seluruh state kalkulator ke localStorage.
 
     function saveState() {
 
@@ -421,6 +425,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // HELPERS
     // ========================================
 
+    // Memformat angka menjadi tampilan mata uang Rupiah.
+
     function formatRupiah(value) {
 
         const number =
@@ -438,6 +444,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+    // Memformat angka agar mudah dibaca pengguna.
+
     function formatNumber(value) {
 
         const number =
@@ -452,6 +460,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
+    // Mengamankan teks sebelum ditampilkan sebagai HTML.
 
     function escapeHtml(value) {
 
@@ -468,6 +478,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // ========================================
     // UNIT FUNCTIONS
     // ========================================
+
+    // Mengubah jumlah bahan ke satuan dasar untuk perhitungan.
 
     function convertToBaseUnit(
         quantity,
@@ -488,6 +500,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
+    // Memeriksa apakah dua satuan bahan dapat dikonversi.
 
     function areUnitsCompatible(
         purchaseUnit,
@@ -519,6 +533,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // ========================================
     // CALCULATIONS
     // ========================================
+
+    // Menghitung biaya bahan berdasarkan harga beli dan jumlah pemakaian.
 
     function calculateIngredientCost(
         ingredient
@@ -594,6 +610,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+    // Menjumlahkan seluruh biaya bahan dalam resep.
+
     function getTotalIngredientCost() {
 
         return state.ingredients.reduce(
@@ -616,7 +634,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    function getActiveAdditionalCost() {
+    // Mengambil hanya biaya tambahan dari mode yang sedang aktif.
+        function getActiveAdditionalCost() {
 
     const additionalCosts =
         state.additionalCosts;
@@ -690,6 +709,8 @@ document.addEventListener("DOMContentLoaded", function () {
 }
 
 
+// Menghitung total biaya produksi dari bahan dan biaya tambahan aktif.
+
 function getTotalProductionCost() {
 
     return (
@@ -699,6 +720,8 @@ function getTotalProductionCost() {
 
 }
 
+
+// Menghitung HPP per unit berdasarkan total biaya produksi dan yield.
 
 function getHppPerUnit() {
 
@@ -723,6 +746,8 @@ function getHppPerUnit() {
     // MODAL
     // ========================================
 
+    // Membuka modal dan mengunci scroll halaman.
+
     function openModal(modal) {
 
         if (!modal) {
@@ -740,6 +765,8 @@ function getHppPerUnit() {
     }
 
 
+    // Menutup modal dan mengembalikan scroll halaman.
+
     function closeModal(modal) {
 
         if (!modal) {
@@ -755,9 +782,13 @@ function getHppPerUnit() {
         );
 
     }
-        // ========================================
+
+
+    // ========================================
     // PRODUCT DISPLAY
     // ========================================
+
+    // Menampilkan informasi produk pada halaman utama.
 
     function renderProduct() {
 
@@ -894,6 +925,8 @@ function getHppPerUnit() {
     // ========================================
     // INGREDIENT DISPLAY
     // ========================================
+
+    // Menampilkan daftar bahan dan biaya masing-masing.
 
     function renderIngredients() {
 
@@ -1044,6 +1077,8 @@ function getHppPerUnit() {
     // ========================================
     // ADDITIONAL COST DISPLAY
     // ========================================
+
+    // Menampilkan ringkasan biaya tambahan sesuai mode aktif.
 
     function renderAdditionalCost() {
 
@@ -1212,9 +1247,12 @@ function getHppPerUnit() {
 
 }
 
+
     // ========================================
     // RESULTS
     // ========================================
+
+    // Menampilkan total biaya dan HPP per unit.
 
     function renderResults() {
 
@@ -1278,7 +1316,8 @@ function getHppPerUnit() {
     // RENDER APP
     // ========================================
 
-    function renderApp() {
+    // Menjalankan seluruh proses render aplikasi.
+            function renderApp() {
 
         renderProduct();
 
@@ -1294,6 +1333,8 @@ function getHppPerUnit() {
     // ========================================
     // PRODUCT MODAL
     // ========================================
+
+    // Membuka modal untuk menambah produk.
 
     function openAddProductModal() {
 
@@ -1337,6 +1378,8 @@ function getHppPerUnit() {
     }
 
 
+    // Membuka modal untuk mengedit produk yang tersimpan.
+
     function openEditProductModal() {
 
         if (!productModal) {
@@ -1364,6 +1407,8 @@ function getHppPerUnit() {
 
     }
 
+
+    // Memvalidasi dan menyimpan data produk.
 
     function saveProduct() {
 
@@ -1431,6 +1476,8 @@ function getHppPerUnit() {
     // INGREDIENT MODAL
     // ========================================
 
+    // Mengosongkan form bahan untuk mode tambah.
+
     function resetIngredientModal() {
 
         editingIngredientId = null;
@@ -1474,6 +1521,8 @@ function getHppPerUnit() {
     }
 
 
+    // Membuka modal untuk menambah bahan.
+
     function openAddIngredientModal() {
 
         resetIngredientModal();
@@ -1503,6 +1552,8 @@ function getHppPerUnit() {
 
     }
 
+
+    // Membuka modal edit dengan data bahan yang dipilih.
 
     function openEditIngredientModal(id) {
 
@@ -1566,6 +1617,8 @@ function getHppPerUnit() {
     }
 
 
+    // Mengambil data bahan dari form.
+
     function getIngredientFormData() {
 
         return {
@@ -1598,6 +1651,8 @@ function getHppPerUnit() {
 
     }
 
+
+    // Memvalidasi data bahan sebelum disimpan.
 
     function validateIngredient(data) {
 
@@ -1654,9 +1709,13 @@ function getHppPerUnit() {
         return "";
 
     }
-        // ========================================
+
+
+    // ========================================
     // INGREDIENT LIVE PREVIEW
     // ========================================
+
+    // Memperbarui preview biaya bahan secara langsung.
 
     function updateIngredientPreview() {
 
@@ -1704,6 +1763,8 @@ function getHppPerUnit() {
     // ========================================
     // SAVE INGREDIENT
     // ========================================
+
+    // Menambah bahan baru atau memperbarui bahan yang sudah ada.
 
     function saveIngredient() {
 
@@ -1836,7 +1897,8 @@ function getHppPerUnit() {
     // DELETE INGREDIENT
     // ========================================
 
-    function deleteCurrentIngredient() {
+    // Menghapus bahan yang sedang diedit setelah konfirmasi.
+        function deleteCurrentIngredient() {
 
         if (
             editingIngredientId === null
@@ -1913,242 +1975,226 @@ function getHppPerUnit() {
 
 
     // ========================================
-// ADDITIONAL COST MODAL
-// ========================================
+    // ADDITIONAL COST MODAL
+    // Mengatur mode Simple/Detailed dan penyimpanan biaya tambahan.
+    // ========================================
 
-let selectedAdditionalCostMode = "simple";
-
-
-function updateAdditionalCostModalMode() {
-
-    const simpleFields =
-        document.getElementById(
-            "simpleAdditionalCostFields"
-        );
-
-    const detailedFields =
-        document.getElementById(
-            "detailedAdditionalCostFields"
-        );
-
-    const modeInput =
-        document.getElementById(
-            "additionalCostModeInput"
-        );
+    let selectedAdditionalCostMode = "simple";
 
 
-    if (modeInput) {
+    // Mengubah tampilan field modal sesuai mode Simple atau Detailed.
 
-        modeInput.value =
-            selectedAdditionalCostMode;
+    function updateAdditionalCostModalMode() {
+
+        const modeInput =
+            document.getElementById(
+                "additionalCostModeInput"
+            );
+
+        const simpleFields =
+            document.getElementById(
+                "simpleAdditionalCostFields"
+            );
+
+        const detailedFields =
+            document.getElementById(
+                "detailedAdditionalCostFields"
+            );
+
+
+        if (modeInput) {
+
+            modeInput.value =
+                selectedAdditionalCostMode;
+
+        }
+
+
+        if (simpleFields) {
+
+            simpleFields.classList.toggle(
+                "hidden",
+                selectedAdditionalCostMode !== "simple"
+            );
+
+        }
+
+
+        if (detailedFields) {
+
+            detailedFields.classList.toggle(
+                "hidden",
+                selectedAdditionalCostMode !== "detailed"
+            );
+
+        }
 
     }
 
 
-    if (simpleFields) {
+    // Membuka modal biaya tambahan dengan data yang tersimpan.
 
-        simpleFields.classList.toggle(
-            "hidden",
-            selectedAdditionalCostMode !== "simple"
-        );
+    function openAddAdditionalCostModal() {
 
-    }
-
-
-    if (detailedFields) {
-
-        detailedFields.classList.toggle(
-            "hidden",
-            selectedAdditionalCostMode !== "detailed"
-        );
-
-    }
-
-}
+        if (!additionalCostModal) {
+            return;
+        }
 
 
-function openAddAdditionalCostModal() {
-
-    if (!additionalCostModal) {
-        return;
-    }
+        const additionalCosts =
+            state.additionalCosts || {};
 
 
-    const additionalCosts =
-        state.additionalCosts;
+        selectedAdditionalCostMode =
+            additionalCosts.mode === "detailed"
+                ? "detailed"
+                : "simple";
 
-
-    selectedAdditionalCostMode =
-        additionalCosts?.mode === "detailed"
-            ? "detailed"
-            : "simple";
-
-
-    if (additionalCostInput) {
 
         const simpleTotal =
             Number(
-                additionalCosts?.simple?.total
+                additionalCosts.simple?.total
             ) || 0;
 
 
-        additionalCostInput.value =
-            simpleTotal > 0
-                ? simpleTotal
-                : "";
+        if (additionalCostInput) {
+
+            additionalCostInput.value =
+                simpleTotal > 0
+                    ? simpleTotal
+                    : "";
+
+        }
+
+
+        updateAdditionalCostModalMode();
+
+
+        openModal(
+            additionalCostModal
+        );
+
+
+        setTimeout(
+            function () {
+
+                if (
+                    selectedAdditionalCostMode === "simple" &&
+                    additionalCostInput
+                ) {
+
+                    additionalCostInput.focus();
+
+                }
+
+            },
+            100
+        );
 
     }
 
 
-    updateAdditionalCostModalMode();
+    // Membuka modal untuk mengedit biaya tambahan.
+
+    function openEditAdditionalCostModal() {
+
+        openAddAdditionalCostModal();
+
+    }
 
 
-    openModal(
-        additionalCostModal
-    );
+    // Menyimpan mode biaya aktif tanpa menghapus mode lainnya.
+
+    function saveAdditionalCost() {
+
+        const mode =
+            selectedAdditionalCostMode === "detailed"
+                ? "detailed"
+                : "simple";
 
 
-    setTimeout(
-        function () {
+        const currentAdditionalCosts =
+            state.additionalCosts || {};
 
-            if (
-                selectedAdditionalCostMode === "simple" &&
-                additionalCostInput
-            ) {
 
-                additionalCostInput.focus();
+        const simpleTotal =
+            Number(
+                currentAdditionalCosts.simple?.total
+            ) || 0;
+
+
+        const detailed =
+            currentAdditionalCosts.detailed || {
+                gas: null,
+                electricity: null,
+                packaging: null,
+                labor: null
+            };
+
+
+        let newSimpleTotal =
+            simpleTotal;
+
+
+        if (mode === "simple") {
+
+            newSimpleTotal =
+                Number(
+                    additionalCostInput?.value
+                ) || 0;
+
+
+            if (newSimpleTotal < 0) {
+
+                alert(
+                    "Biaya tambahan tidak boleh negatif."
+                );
+
+                return;
 
             }
 
-        },
-        100
-    );
-
-}
+        }
 
 
-function openEditAdditionalCostModal() {
+        state.additionalCosts = {
 
-    openAddAdditionalCostModal();
+            mode: mode,
 
-}
+            simple: {
 
+                total: newSimpleTotal
 
-function saveAdditionalCost() {
+            },
 
-    const mode =
-        selectedAdditionalCostMode === "detailed"
-            ? "detailed"
-            : "simple";
+            detailed: {
 
+                gas: detailed.gas || null,
 
-    const currentAdditionalCosts =
-        state.additionalCosts || {};
+                electricity: detailed.electricity || null,
 
+                packaging: detailed.packaging || null,
 
-    /*
-     * Pastikan struktur selalu lengkap.
-     *
-     * Nilai mode yang tidak aktif
-     * TIDAK dihapus.
-     */
+                labor: detailed.labor || null
 
-    const simpleTotal =
-        Number(
-            currentAdditionalCosts
-                .simple?.total
-        ) || 0;
+            }
 
-
-    const detailed =
-        currentAdditionalCosts.detailed || {
-            gas: null,
-            electricity: null,
-            packaging: null,
-            labor: null
         };
 
 
-    /*
-     * Jika Simple aktif,
-     * ambil nilai dari input.
-     */
-
-    let newSimpleTotal =
-        simpleTotal;
+        saveState();
 
 
-    if (mode === "simple") {
-
-        newSimpleTotal =
-            Number(
-                additionalCostInput?.value
-            ) || 0;
+        closeModal(
+            additionalCostModal
+        );
 
 
-        if (newSimpleTotal < 0) {
-
-            alert(
-                "Biaya tambahan tidak boleh negatif."
-            );
-
-            return;
-
-        }
+        renderApp();
 
     }
 
 
-    /*
-     * Jika Detailed aktif,
-     * untuk tahap sekarang belum ada
-     * komponen biaya yang diedit.
-     *
-     * Semua data Detailed yang sudah ada
-     * tetap dipertahankan.
-     */
-
-    state.additionalCosts = {
-
-        mode: mode,
-
-        simple: {
-
-            total:
-                newSimpleTotal
-
-        },
-
-        detailed: {
-
-            gas:
-                detailed.gas || null,
-
-            electricity:
-                detailed.electricity || null,
-
-            packaging:
-                detailed.packaging || null,
-
-            labor:
-                detailed.labor || null
-
-        }
-
-    };
-
-
-    saveState();
-
-
-    closeModal(
-        additionalCostModal
-    );
-
-
-    renderApp();
-
-}
     // ========================================
     // MODAL CLOSE BUTTONS
     // ========================================
@@ -2189,6 +2235,7 @@ function saveAdditionalCost() {
 
     // ========================================
     // MODAL OVERLAY
+    // Menutup modal ketika area gelap di luar modal diklik.
     // ========================================
 
     document
@@ -2221,6 +2268,7 @@ function saveAdditionalCost() {
 
     // ========================================
     // ESC KEY
+    // Menutup modal ketika tombol Escape ditekan.
     // ========================================
 
     document.addEventListener(
@@ -2257,6 +2305,7 @@ function saveAdditionalCost() {
 
     // ========================================
     // PRODUCT EVENTS
+    // Menghubungkan tombol produk dengan function-nya.
     // ========================================
 
     if (addProductButton) {
@@ -2291,6 +2340,7 @@ function saveAdditionalCost() {
 
     // ========================================
     // INGREDIENT EVENTS
+    // Menghubungkan tombol bahan dengan function-nya.
     // ========================================
 
     if (addIngredientButton) {
@@ -2325,6 +2375,7 @@ function saveAdditionalCost() {
 
     // ========================================
     // INGREDIENT LIVE CALCULATION EVENTS
+    // Memperbarui preview biaya bahan ketika input berubah.
     // ========================================
 
     const ingredientInputs = [
@@ -2363,9 +2414,38 @@ function saveAdditionalCost() {
 
         }
     );
-        // ========================================
-    // ADDITIONAL COST EVENTS
+
+
     // ========================================
+    // ADDITIONAL COST EVENTS
+    // Menghubungkan selector dan tombol biaya tambahan.
+    // ========================================
+
+    const additionalCostModeInput =
+        document.getElementById(
+            "additionalCostModeInput"
+        );
+
+
+    if (additionalCostModeInput) {
+
+        additionalCostModeInput.addEventListener(
+            "change",
+            function () {
+
+                selectedAdditionalCostMode =
+                    additionalCostModeInput.value === "detailed"
+                        ? "detailed"
+                        : "simple";
+
+
+                updateAdditionalCostModalMode();
+
+            }
+        );
+
+    }
+
 
     if (addAdditionalCostButton) {
 
@@ -2389,6 +2469,7 @@ function saveAdditionalCost() {
 
     // ========================================
     // INITIAL RENDER
+    // Menampilkan aplikasi ketika halaman pertama kali dibuka.
     // ========================================
 
     renderApp();
