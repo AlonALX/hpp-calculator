@@ -12,59 +12,35 @@ document.addEventListener("DOMContentLoaded", function () {
     const STORAGE_KEY = "hppCalculatorState";
 
     const defaultState = {
-        product: {
-            name: "",
-            yieldQuantity: 0,
-            yieldUnit: "pcs"
+    product: {
+        name: "",
+        yieldQuantity: 0,
+        yieldUnit: "pcs"
+    },
+    ingredients: [],
+    additionalCosts: {
+        mode: "simple",
+        simple: {
+            total: 0
         },
-        ingredients: [],
-        additionalCost: 0
-    };
+        detailed: {
+            gas: null,
+            electricity: null,
+            packaging: null,
+            labor: null
+        }
+    }
+};
 
 
     function loadState() {
 
-        try {
+    try {
 
-            const saved =
-                localStorage.getItem(STORAGE_KEY);
+        const saved =
+            localStorage.getItem(STORAGE_KEY);
 
-            if (!saved) {
-
-                return JSON.parse(
-                    JSON.stringify(defaultState)
-                );
-
-            }
-
-            const parsed =
-                JSON.parse(saved);
-
-            return {
-
-                product: {
-                    ...defaultState.product,
-                    ...(parsed.product || {})
-                },
-
-                ingredients:
-                    Array.isArray(parsed.ingredients)
-                        ? parsed.ingredients
-                        : [],
-
-                additionalCost:
-                    Number(
-                        parsed.additionalCost
-                    ) || 0
-
-            };
-
-        } catch (error) {
-
-            console.error(
-                "Gagal membaca localStorage:",
-                error
-            );
+        if (!saved) {
 
             return JSON.parse(
                 JSON.stringify(defaultState)
@@ -72,7 +48,127 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
+        const parsed =
+            JSON.parse(saved);
+
+        /*
+         * Backward compatibility:
+         * Versi lama menggunakan:
+         *
+         * additionalCost: 10000
+         *
+         * Nilai tersebut dipindahkan
+         * menjadi Simple Mode.
+         */
+        let additionalCosts;
+
+        if (
+            parsed.additionalCosts &&
+            typeof parsed.additionalCosts === "object"
+        ) {
+
+            additionalCosts = {
+
+                mode:
+                    parsed.additionalCosts.mode === "detailed"
+                        ? "detailed"
+                        : "simple",
+
+                simple: {
+
+                    total:
+                        Number(
+                            parsed.additionalCosts.simple?.total
+                        ) || 0
+
+                },
+
+                detailed: {
+
+                    gas:
+                        parsed.additionalCosts.detailed?.gas || null,
+
+                    electricity:
+                        parsed.additionalCosts.detailed?.electricity || null,
+
+                    packaging:
+                        parsed.additionalCosts.detailed?.packaging || null,
+
+                    labor:
+                        parsed.additionalCosts.detailed?.labor || null
+
+                }
+
+            };
+
+        } else {
+
+            /*
+             * Migrate data dari versi lama.
+             */
+            additionalCosts = {
+
+                mode: "simple",
+
+                simple: {
+
+                    total:
+                        Number(
+                            parsed.additionalCost
+                        ) || 0
+
+                },
+
+                detailed: {
+
+                    gas: null,
+
+                    electricity: null,
+
+                    packaging: null,
+
+                    labor: null
+
+                }
+
+            };
+
+        }
+
+        return {
+
+            product: {
+
+                ...defaultState.product,
+
+                ...(parsed.product || {})
+
+            },
+
+            ingredients:
+                Array.isArray(parsed.ingredients)
+                    ? parsed.ingredients
+                    : [],
+
+            additionalCosts:
+                additionalCosts
+
+        };
+
+    } catch (error) {
+
+        console.error(
+            "Gagal membaca localStorage:",
+            error
+        );
+
+        return JSON.parse(
+            JSON.stringify(defaultState)
+        );
+
     }
+
+}
 
 
     function saveState() {
@@ -520,37 +616,107 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    function getTotalProductionCost() {
+    function getActiveAdditionalCost() {
+
+    const additionalCosts =
+        state.additionalCosts;
+
+    if (!additionalCosts) {
+        return 0;
+    }
+
+    /*
+     * SIMPLE MODE
+     *
+     * Hanya nilai Simple yang digunakan
+     * ketika mode aktif adalah simple.
+     */
+    if (
+        additionalCosts.mode === "simple"
+    ) {
 
         return (
-            getTotalIngredientCost() +
             Number(
-                state.additionalCost || 0
-            )
+                additionalCosts.simple?.total
+            ) || 0
         );
 
     }
 
+    /*
+     * DETAILED MODE
+     *
+     * Untuk sekarang komponen Detailed
+     * masih bisa kosong/null.
+     *
+     * Gas, listrik, kemasan, dan tenaga kerja
+     * akan diisi pada tahap berikutnya.
+     */
+    if (
+        additionalCosts.mode === "detailed"
+    ) {
 
-    function getHppPerUnit() {
-
-        const yieldQuantity =
+        const gas =
             Number(
-                state.product.yieldQuantity
+                additionalCosts.detailed?.gas?.cost
             ) || 0;
 
+        const electricity =
+            Number(
+                additionalCosts.detailed?.electricity?.cost
+            ) || 0;
 
-        if (yieldQuantity <= 0) {
-            return 0;
-        }
+        const packaging =
+            Number(
+                additionalCosts.detailed?.packaging?.cost
+            ) || 0;
 
+        const labor =
+            Number(
+                additionalCosts.detailed?.labor?.cost
+            ) || 0;
 
         return (
-            getTotalProductionCost() /
-            yieldQuantity
+            gas +
+            electricity +
+            packaging +
+            labor
         );
 
     }
+
+    return 0;
+
+}
+
+
+function getTotalProductionCost() {
+
+    return (
+        getTotalIngredientCost() +
+        getActiveAdditionalCost()
+    );
+
+}
+
+
+function getHppPerUnit() {
+
+    const yieldQuantity =
+        Number(
+            state.product.yieldQuantity
+        ) || 0;
+
+    if (yieldQuantity <= 0) {
+        return 0;
+    }
+
+    return (
+        getTotalProductionCost() /
+        yieldQuantity
+    );
+
+}
 
 
     // ========================================
@@ -881,38 +1047,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderAdditionalCost() {
 
-        if (!additionalCostDisplay) {
-            return;
-        }
+    if (!additionalCostDisplay) {
+        return;
+    }
 
+
+    const additionalCosts =
+        state.additionalCosts;
+
+
+    if (!additionalCosts) {
+
+        additionalCostDisplay.innerHTML = `
+
+            <div class="empty-state compact">
+
+                <strong>
+                    Belum ada biaya tambahan
+                </strong>
+
+                <p>
+                    Tambahkan biaya tambahan
+                    untuk menghitung HPP.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    const mode =
+        additionalCosts.mode === "detailed"
+            ? "detailed"
+            : "simple";
+
+
+    /*
+     * SIMPLE MODE
+     */
+
+    if (mode === "simple") {
 
         const cost =
             Number(
-                state.additionalCost
+                additionalCosts.simple?.total
             ) || 0;
-
-
-        if (cost <= 0) {
-
-            additionalCostDisplay.innerHTML = `
-
-                <div class="empty-state compact">
-
-                    <strong>
-                        Belum ada biaya tambahan
-                    </strong>
-
-                    <p>
-                        Gas, listrik, packaging,
-                        dan labor dapat ditambahkan.
-                    </p>
-
-                </div>
-
-            `;
-
-            return;
-        }
 
 
         additionalCostDisplay.innerHTML = `
@@ -963,8 +1146,71 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
+        return;
+
     }
 
+
+    /*
+     * DETAILED MODE
+     *
+     * Pada tahap 6A belum ada komponen
+     * biaya yang dapat diinput.
+     */
+
+    const detailedCost =
+        getActiveAdditionalCost();
+
+
+    additionalCostDisplay.innerHTML = `
+
+        <div class="product-display-card">
+
+            <div>
+
+                <div class="ingredient-name-display">
+                    Biaya tambahan
+                </div>
+
+                <div class="ingredient-usage-display">
+                    Detailed / Guided
+                </div>
+
+                <div class="ingredient-cost-display">
+                    ${formatRupiah(detailedCost)}
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="edit-text-button"
+                id="editAdditionalCostButton"
+            >
+                Edit
+            </button>
+
+        </div>
+
+    `;
+
+
+    const editButton =
+        document.getElementById(
+            "editAdditionalCostButton"
+        );
+
+
+    if (editButton) {
+
+        editButton.addEventListener(
+            "click",
+            openEditAdditionalCostModal
+        );
+
+    }
+
+}
 
     // ========================================
     // RESULTS
@@ -972,62 +1218,60 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderResults() {
 
-        const ingredientCost =
-            getTotalIngredientCost();
+    const ingredientCost =
+        getTotalIngredientCost();
 
-        const additionalCost =
-            Number(
-                state.additionalCost
-            ) || 0;
+    const additionalCost =
+        getActiveAdditionalCost();
 
-        const productionCost =
-            ingredientCost +
-            additionalCost;
+    const productionCost =
+        ingredientCost +
+        additionalCost;
 
-        const hppPerUnit =
-            getHppPerUnit();
+    const hppPerUnit =
+        getHppPerUnit();
 
 
-        if (totalIngredientCostElement) {
+    if (totalIngredientCostElement) {
 
-            totalIngredientCostElement.textContent =
-                formatRupiah(
-                    ingredientCost
-                );
-
-        }
-
-
-        if (totalAdditionalCostElement) {
-
-            totalAdditionalCostElement.textContent =
-                formatRupiah(
-                    additionalCost
-                );
-
-        }
-
-
-        if (totalProductionCostElement) {
-
-            totalProductionCostElement.textContent =
-                formatRupiah(
-                    productionCost
-                );
-
-        }
-
-
-        if (hppPerUnitElement) {
-
-            hppPerUnitElement.textContent =
-                formatRupiah(
-                    hppPerUnit
-                );
-
-        }
+        totalIngredientCostElement.textContent =
+            formatRupiah(
+                ingredientCost
+            );
 
     }
+
+
+    if (totalAdditionalCostElement) {
+
+        totalAdditionalCostElement.textContent =
+            formatRupiah(
+                additionalCost
+            );
+
+    }
+
+
+    if (totalProductionCostElement) {
+
+        totalProductionCostElement.textContent =
+            formatRupiah(
+                productionCost
+            );
+
+    }
+
+
+    if (hppPerUnitElement) {
+
+        hppPerUnitElement.textContent =
+            formatRupiah(
+                hppPerUnit
+            );
+
+    }
+
+}
 
 
     // ========================================
