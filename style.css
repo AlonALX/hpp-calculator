@@ -18,6 +18,10 @@ body {
     line-height: 1.5;
 }
 
+body.modal-open {
+    overflow: hidden;
+}
+
 .container {
     width: min(100% - 20px, 760px);
     margin: 0 auto;
@@ -42,7 +46,7 @@ body {
 .header p {
     margin: 0;
     color: #6b7280;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 
@@ -59,8 +63,210 @@ body {
 }
 
 .card h2 {
-    margin: 0 0 12px;
+    margin: 3px 0 0;
+    font-size: 20px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.section-label {
+    display: block;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+
+/* ========================================
+   BUTTONS
+======================================== */
+
+.button {
+    min-height: 46px;
+    border: none;
+    border-radius: 9px;
+    padding: 10px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.button.primary {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.button.primary:hover {
+    background: #1d4ed8;
+}
+
+.button.secondary {
+    background: #eef2ff;
+    color: #3730a3;
+}
+
+.button.secondary:hover {
+    background: #e0e7ff;
+}
+
+.button.danger {
+    background: #fff1f2;
+    color: #b91c1c;
+}
+
+.button.danger:hover {
+    background: #ffe4e6;
+}
+
+.full-width {
+    width: 100%;
+    margin-top: 12px;
+}
+
+.icon-button {
+    width: 42px;
+    height: 42px;
+    border: 1px solid #dbeafe;
+    border-radius: 9px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+
+/* ========================================
+   EMPTY STATE
+======================================== */
+
+.empty-state {
+    padding: 22px 10px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.empty-state.compact {
+    padding: 12px 8px;
+}
+
+.empty-icon {
+    width: 42px;
+    height: 42px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    background: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.empty-state strong {
+    display: block;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.empty-state p {
+    margin: 0 0 14px;
+    font-size: 14px;
+}
+
+
+/* ========================================
+   DISPLAY PRODUCT
+======================================== */
+
+.product-display-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.product-name {
+    margin: 0;
     font-size: 21px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.product-yield {
+    margin-top: 4px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.edit-text-button {
+    border: none;
+    background: transparent;
+    color: #2563eb;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px;
+    cursor: pointer;
+}
+
+
+/* ========================================
+   INGREDIENT LIST
+======================================== */
+
+.ingredient-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ingredient-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 11px;
+    padding: 13px;
+    background: #fafafa;
+}
+
+.ingredient-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.ingredient-name-display {
+    font-weight: 700;
+    color: #111827;
+}
+
+.ingredient-usage-display {
+    margin-top: 3px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.ingredient-cost-display {
+    margin-top: 8px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.ingredient-edit-button {
+    border: none;
+    background: transparent;
+    color: #2563eb;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 6px;
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
 
@@ -69,7 +275,7 @@ body {
 ======================================== */
 
 .form-group {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .form-group:last-child {
@@ -79,8 +285,8 @@ body {
 label {
     display: block;
     margin-bottom: 6px;
+    font-size: 14px;
     font-weight: 600;
-    font-size: 15px;
 }
 
 input,
@@ -107,104 +313,124 @@ input::placeholder {
 
 .form-row {
     display: grid;
-    grid-template-columns: 1fr 140px;
+    grid-template-columns: 1fr 120px;
     gap: 10px;
 }
-
-
-/* ========================================
-   HELPER TEXT
-======================================== */
 
 .helper-text {
     color: #6b7280;
     font-size: 14px;
-    margin: -4px 0 14px;
 }
 
 
 /* ========================================
-   INGREDIENT
+   MODAL
 ======================================== */
 
-.ingredient-card {
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 12px;
-    background: #fafafa;
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
 }
 
-.ingredient-card h3 {
-    margin: 0 0 12px;
-    font-size: 16px;
+.modal.hidden {
+    display: none;
 }
 
-.ingredient-purchase,
-.ingredient-usage {
-    display: grid;
-    grid-template-columns: 1fr 100px;
-    gap: 8px;
-    margin-bottom: 10px;
+.modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.55);
 }
 
-.ingredient-cost {
+.modal-content {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 600px);
+    max-height: 92vh;
+    overflow-y: auto;
+    background: #ffffff;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 10px;
+    gap: 12px;
+    padding: 18px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 19px;
+}
+
+.modal-close {
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 18px;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 8px;
+    padding: 14px 18px;
     border-top: 1px solid #e5e7eb;
 }
 
-.ingredient-cost span {
-    color: #6b7280;
+.modal-footer .button {
+    flex: 1;
+}
+
+
+/* ========================================
+   CALCULATION PREVIEW
+======================================== */
+
+.calculation-preview {
+    margin-top: 8px;
+    padding: 12px;
+    border-radius: 9px;
+    background: #f3f4f6;
     font-size: 14px;
 }
 
-.ingredient-cost strong {
+.calculation-preview strong {
     font-size: 16px;
 }
 
 
 /* ========================================
-   BUTTON
+   VALIDATION
 ======================================== */
 
-.button {
-    min-height: 46px;
-    border: none;
-    border-radius: 9px;
-    padding: 10px 16px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.button.secondary {
-    background: #eef2ff;
-    color: #3730a3;
-}
-
-.button.secondary:hover {
-    background: #e0e7ff;
-}
-
-
-/* ========================================
-   REMOVE BUTTON
-======================================== */
-
-.remove-button {
-    width: 100%;
+.validation-message {
     margin-top: 10px;
-    min-height: 40px;
-    border: 1px solid #fecaca;
+    padding: 10px;
     border-radius: 8px;
     background: #fff1f2;
     color: #b91c1c;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
+    font-size: 13px;
+}
+
+.validation-message.hidden {
+    display: none;
 }
 
 
@@ -236,12 +462,12 @@ input::placeholder {
 }
 
 .result-item strong {
-    font-size: 18px;
+    font-size: 17px;
 }
 
 .result-item.highlight {
     margin-top: 4px;
-    padding: 16px 0 4px;
+    padding-top: 16px;
 }
 
 .result-item.highlight span {
@@ -250,30 +476,16 @@ input::placeholder {
 }
 
 .result-item.highlight strong {
-    font-size: 22px;
+    font-size: 23px;
 }
 
-
-/* ========================================
-   INFO BOX
-======================================== */
-
-.info-box {
+.result-note {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 9px;
     background: #eff6ff;
-    border: 1px solid #dbeafe;
-    border-radius: 12px;
-    margin-top: 16px;
-    padding: 15px;
-}
-
-.info-box strong {
-    font-size: 15px;
-}
-
-.info-box p {
-    margin: 5px 0 0;
     color: #4b5563;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 
@@ -295,16 +507,16 @@ input::placeholder {
 
 @media (max-width: 600px) {
 
+    .container {
+        width: min(100% - 16px, 760px);
+    }
+
     .header {
-        padding: 22px 0 18px;
+        padding: 20px 0 17px;
     }
 
     .header h1 {
-        font-size: 25px;
-    }
-
-    .header p {
-        font-size: 15px;
+        font-size: 24px;
     }
 
     .card {
@@ -317,22 +529,17 @@ input::placeholder {
         gap: 0;
     }
 
-    .ingredient-purchase,
-    .ingredient-usage {
-        grid-template-columns: 1fr;
-    }
-
-    .result-item {
+    .product-display-card {
         align-items: flex-start;
-        flex-direction: column;
-        gap: 4px;
     }
 
-    .result-item strong {
-        font-size: 19px;
+    .modal-content {
+        max-height: 94vh;
     }
 
-    .result-item.highlight strong {
-        font-size: 22px;
+    .modal-footer {
+        position: sticky;
+        bottom: 0;
+        background: #ffffff;
     }
 }
