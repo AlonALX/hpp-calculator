@@ -1,16 +1,17 @@
 // ========================================
 // HPP CALCULATOR
-// STEP 8A.3
-// Display + Modal Architecture
+// Display + Modal + LocalStorage
 // ========================================
 
 document.addEventListener("DOMContentLoaded", function () {
 
     // ========================================
-    // APP STATE
+    // STORAGE
     // ========================================
 
-    const state = {
+    const STORAGE_KEY = "hppCalculatorState";
+
+    const defaultState = {
         product: {
             name: "",
             yieldQuantity: 0,
@@ -20,6 +21,84 @@ document.addEventListener("DOMContentLoaded", function () {
         additionalCost: 0
     };
 
+
+    function loadState() {
+
+        try {
+
+            const saved =
+                localStorage.getItem(STORAGE_KEY);
+
+            if (!saved) {
+
+                return JSON.parse(
+                    JSON.stringify(defaultState)
+                );
+
+            }
+
+            const parsed =
+                JSON.parse(saved);
+
+            return {
+
+                product: {
+                    ...defaultState.product,
+                    ...(parsed.product || {})
+                },
+
+                ingredients:
+                    Array.isArray(parsed.ingredients)
+                        ? parsed.ingredients
+                        : [],
+
+                additionalCost:
+                    Number(
+                        parsed.additionalCost
+                    ) || 0
+
+            };
+
+        } catch (error) {
+
+            console.error(
+                "Gagal membaca localStorage:",
+                error
+            );
+
+            return JSON.parse(
+                JSON.stringify(defaultState)
+            );
+
+        }
+
+    }
+
+
+    function saveState() {
+
+        try {
+
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify(state)
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Gagal menyimpan localStorage:",
+                error
+            );
+
+        }
+
+    }
+
+
+    const state =
+        loadState();
+
     let editingIngredientId = null;
 
 
@@ -28,50 +107,80 @@ document.addEventListener("DOMContentLoaded", function () {
     // ========================================
 
     const productDisplay =
-        document.getElementById("productDisplay");
+        document.getElementById(
+            "productDisplay"
+        );
 
     const addProductButton =
-        document.getElementById("addProductButton");
+        document.getElementById(
+            "addProductButton"
+        );
 
     const editProductButton =
-        document.getElementById("editProductButton");
+        document.getElementById(
+            "editProductButton"
+        );
 
     const productModal =
-        document.getElementById("productModal");
+        document.getElementById(
+            "productModal"
+        );
 
     const productModalTitle =
-        document.getElementById("productModalTitle");
+        document.getElementById(
+            "productModalTitle"
+        );
 
     const productNameInput =
-        document.getElementById("productNameInput");
+        document.getElementById(
+            "productNameInput"
+        );
 
     const yieldQuantityInput =
-        document.getElementById("yieldQuantityInput");
+        document.getElementById(
+            "yieldQuantityInput"
+        );
 
     const yieldUnitInput =
-        document.getElementById("yieldUnitInput");
+        document.getElementById(
+            "yieldUnitInput"
+        );
 
     const saveProductButton =
-        document.getElementById("saveProductButton");
+        document.getElementById(
+            "saveProductButton"
+        );
 
 
     const ingredientsDisplay =
-        document.getElementById("ingredientsDisplay");
+        document.getElementById(
+            "ingredientsDisplay"
+        );
 
     const addIngredientButton =
-        document.getElementById("addIngredientButton");
+        document.getElementById(
+            "addIngredientButton"
+        );
 
     const ingredientModal =
-        document.getElementById("ingredientModal");
+        document.getElementById(
+            "ingredientModal"
+        );
 
     const ingredientModalTitle =
-        document.getElementById("ingredientModalTitle");
+        document.getElementById(
+            "ingredientModalTitle"
+        );
 
     const ingredientNameInput =
-        document.getElementById("ingredientNameInput");
+        document.getElementById(
+            "ingredientNameInput"
+        );
 
     const ingredientPriceInput =
-        document.getElementById("ingredientPriceInput");
+        document.getElementById(
+            "ingredientPriceInput"
+        );
 
     const ingredientPurchaseQuantityInput =
         document.getElementById(
@@ -213,29 +322,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ========================================
-    // BASIC HELPERS
+    // HELPERS
     // ========================================
 
     function formatRupiah(value) {
 
-        const number = Number(value) || 0;
+        const number =
+            Number(value) || 0;
 
-        return new Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR",
-            maximumFractionDigits: 0
-        }).format(number);
+        return new Intl.NumberFormat(
+            "id-ID",
+            {
+                style: "currency",
+                currency: "IDR",
+                maximumFractionDigits: 0
+            }
+        ).format(number);
 
     }
 
 
     function formatNumber(value) {
 
-        const number = Number(value) || 0;
+        const number =
+            Number(value) || 0;
 
-        return new Intl.NumberFormat("id-ID", {
-            maximumFractionDigits: 2
-        }).format(number);
+        return new Intl.NumberFormat(
+            "id-ID",
+            {
+                maximumFractionDigits: 2
+            }
+        ).format(number);
 
     }
 
@@ -253,10 +370,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ========================================
-    // UNIT CONVERSION
+    // UNIT FUNCTIONS
     // ========================================
 
-    function convertToBaseUnit(quantity, unit) {
+    function convertToBaseUnit(
+        quantity,
+        unit
+    ) {
 
         const definition =
             UNIT_DEFINITIONS[unit];
@@ -273,20 +393,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // ========================================
-    // UNIT COMPATIBILITY
-    // ========================================
-
     function areUnitsCompatible(
         purchaseUnit,
         usageUnit
     ) {
 
         const purchase =
-            UNIT_DEFINITIONS[purchaseUnit];
+            UNIT_DEFINITIONS[
+                purchaseUnit
+            ];
 
         const usage =
-            UNIT_DEFINITIONS[usageUnit];
+            UNIT_DEFINITIONS[
+                usageUnit
+            ];
 
         if (!purchase || !usage) {
             return false;
@@ -301,13 +421,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ========================================
-    // INGREDIENT CALCULATION
+    // CALCULATIONS
     // ========================================
 
-    function calculateIngredientCost(ingredient) {
+    function calculateIngredientCost(
+        ingredient
+    ) {
 
         const price =
-            Number(ingredient.purchasePrice) || 0;
+            Number(
+                ingredient.purchasePrice
+            ) || 0;
 
         const purchaseQuantity =
             Number(
@@ -325,7 +449,9 @@ document.addEventListener("DOMContentLoaded", function () {
             purchaseQuantity <= 0 ||
             usageQuantity <= 0
         ) {
+
             return 0;
+
         }
 
 
@@ -335,7 +461,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 ingredient.usageUnit
             )
         ) {
+
             return 0;
+
         }
 
 
@@ -356,7 +484,9 @@ document.addEventListener("DOMContentLoaded", function () {
             purchaseBase <= 0 ||
             usageBase <= 0
         ) {
+
             return 0;
+
         }
 
 
@@ -371,7 +501,10 @@ document.addEventListener("DOMContentLoaded", function () {
     function getTotalIngredientCost() {
 
         return state.ingredients.reduce(
-            function (total, ingredient) {
+            function (
+                total,
+                ingredient
+            ) {
 
                 return (
                     total +
@@ -391,7 +524,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return (
             getTotalIngredientCost() +
-            Number(state.additionalCost || 0)
+            Number(
+                state.additionalCost || 0
+            )
         );
 
     }
@@ -404,9 +539,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 state.product.yieldQuantity
             ) || 0;
 
+
         if (yieldQuantity <= 0) {
             return 0;
         }
+
 
         return (
             getTotalProductionCost() /
@@ -417,7 +554,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ========================================
-    // MODAL HELPERS
+    // MODAL
     // ========================================
 
     function openModal(modal) {
@@ -426,7 +563,9 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        modal.classList.remove("hidden");
+        modal.classList.remove(
+            "hidden"
+        );
 
         document.body.classList.add(
             "modal-open"
@@ -441,16 +580,16 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        modal.classList.add("hidden");
+        modal.classList.add(
+            "hidden"
+        );
 
         document.body.classList.remove(
             "modal-open"
         );
 
     }
-
-
-    // ========================================
+        // ========================================
     // PRODUCT DISPLAY
     // ========================================
 
@@ -460,6 +599,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
         const hasProduct =
             state.product.name.trim() !== "";
 
@@ -467,8 +607,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!hasProduct) {
 
             if (editProductButton) {
+
                 editProductButton.style.display =
                     "none";
+
             }
 
 
@@ -522,8 +664,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         if (editProductButton) {
+
             editProductButton.style.display =
                 "block";
+
         }
 
 
@@ -620,7 +764,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         const list =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         list.className =
             "ingredient-list";
@@ -636,7 +782,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 const item =
-                    document.createElement("div");
+                    document.createElement(
+                        "div"
+                    );
 
                 item.className =
                     "ingredient-item";
@@ -695,9 +843,12 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 
-        ingredientsDisplay.innerHTML = "";
+        ingredientsDisplay.innerHTML =
+            "";
 
-        ingredientsDisplay.appendChild(list);
+        ingredientsDisplay.appendChild(
+            list
+        );
 
 
         ingredientsDisplay
@@ -722,7 +873,9 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
     }
-        // ========================================
+
+
+    // ========================================
     // ADDITIONAL COST DISPLAY
     // ========================================
 
@@ -734,7 +887,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         const cost =
-            Number(state.additionalCost) || 0;
+            Number(
+                state.additionalCost
+            ) || 0;
 
 
         if (cost <= 0) {
@@ -812,7 +967,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ========================================
-    // RESULT DISPLAY
+    // RESULTS
     // ========================================
 
     function renderResults() {
@@ -821,7 +976,9 @@ document.addEventListener("DOMContentLoaded", function () {
             getTotalIngredientCost();
 
         const additionalCost =
-            Number(state.additionalCost) || 0;
+            Number(
+                state.additionalCost
+            ) || 0;
 
         const productionCost =
             ingredientCost +
@@ -874,7 +1031,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ========================================
-    // RENDER EVERYTHING
+    // RENDER APP
     // ========================================
 
     function renderApp() {
@@ -1015,7 +1172,11 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
 
-        closeModal(productModal);
+        saveState();
+
+        closeModal(
+            productModal
+        );
 
         renderApp();
 
@@ -1031,9 +1192,11 @@ document.addEventListener("DOMContentLoaded", function () {
         editingIngredientId = null;
 
 
-        ingredientNameInput.value = "";
+        ingredientNameInput.value =
+            "";
 
-        ingredientPriceInput.value = "";
+        ingredientPriceInput.value =
+            "";
 
         ingredientPurchaseQuantityInput.value =
             "";
@@ -1076,7 +1239,9 @@ document.addEventListener("DOMContentLoaded", function () {
             "Tambah Bahan";
 
 
-        openModal(ingredientModal);
+        openModal(
+            ingredientModal
+        );
 
 
         setTimeout(
@@ -1126,22 +1291,17 @@ document.addEventListener("DOMContentLoaded", function () {
         ingredientNameInput.value =
             ingredient.name;
 
-
         ingredientPriceInput.value =
             ingredient.purchasePrice;
-
 
         ingredientPurchaseQuantityInput.value =
             ingredient.purchaseQuantity;
 
-
         ingredientPurchaseUnitInput.value =
             ingredient.purchaseUnit;
 
-
         ingredientUsageQuantityInput.value =
             ingredient.usageQuantity;
-
 
         ingredientUsageUnitInput.value =
             ingredient.usageUnit;
@@ -1155,7 +1315,9 @@ document.addEventListener("DOMContentLoaded", function () {
         updateIngredientPreview();
 
 
-        openModal(ingredientModal);
+        openModal(
+            ingredientModal
+        );
 
     }
 
@@ -1197,14 +1359,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!data.name) {
 
-            return "Nama bahan belum diisi.";
+            return (
+                "Nama bahan belum diisi."
+            );
 
         }
 
 
         if (data.purchasePrice <= 0) {
 
-            return "Harga beli harus lebih dari 0.";
+            return (
+                "Harga beli harus lebih dari 0."
+            );
 
         }
 
@@ -1244,9 +1410,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return "";
 
     }
-
-
-    // ========================================
+        // ========================================
     // INGREDIENT LIVE PREVIEW
     // ========================================
 
@@ -1276,7 +1440,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         const cost =
-            calculateIngredientCost(data);
+            calculateIngredientCost(
+                data
+            );
 
 
         ingredientCalculationPreview.innerHTML = `
@@ -1290,7 +1456,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-     // ========================================
+
+    // ========================================
     // SAVE INGREDIENT
     // ========================================
 
@@ -1326,7 +1493,9 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 
-        if (editingIngredientId !== null) {
+        if (
+            editingIngredientId !== null
+        ) {
 
             const index =
                 state.ingredients.findIndex(
@@ -1334,7 +1503,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         return (
                             String(item.id) ===
-                            String(editingIngredientId)
+                            String(
+                                editingIngredientId
+                            )
                         );
 
                     }
@@ -1400,9 +1571,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        closeModal(ingredientModal);
+        saveState();
 
-        editingIngredientId = null;
+
+        closeModal(
+            ingredientModal
+        );
+
+
+        editingIngredientId =
+            null;
+
 
         renderApp();
 
@@ -1415,8 +1594,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function deleteCurrentIngredient() {
 
-        if (editingIngredientId === null) {
+        if (
+            editingIngredientId === null
+        ) {
+
             return;
+
         }
 
 
@@ -1426,7 +1609,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     return (
                         String(item.id) ===
-                        String(editingIngredientId)
+                        String(
+                            editingIngredientId
+                        )
                     );
 
                 }
@@ -1457,16 +1642,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     return (
                         String(item.id) !==
-                        String(editingIngredientId)
+                        String(
+                            editingIngredientId
+                        )
                     );
 
                 }
             );
 
 
-        editingIngredientId = null;
+        editingIngredientId =
+            null;
 
-        closeModal(ingredientModal);
+
+        saveState();
+
+
+        closeModal(
+            ingredientModal
+        );
+
 
         renderApp();
 
@@ -1488,7 +1683,9 @@ document.addEventListener("DOMContentLoaded", function () {
             state.additionalCost || "";
 
 
-        openModal(additionalCostModal);
+        openModal(
+            additionalCostModal
+        );
 
 
         setTimeout(
@@ -1518,7 +1715,9 @@ document.addEventListener("DOMContentLoaded", function () {
             state.additionalCost || "";
 
 
-        openModal(additionalCostModal);
+        openModal(
+            additionalCostModal
+        );
 
     }
 
@@ -1546,6 +1745,9 @@ document.addEventListener("DOMContentLoaded", function () {
             value;
 
 
+        saveState();
+
+
         closeModal(
             additionalCostModal
         );
@@ -1557,7 +1759,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ========================================
-    // CLOSE BUTTONS
+    // MODAL CLOSE BUTTONS
     // ========================================
 
     document
@@ -1583,7 +1785,9 @@ document.addEventListener("DOMContentLoaded", function () {
                             );
 
 
-                        closeModal(modal);
+                        closeModal(
+                            modal
+                        );
 
                     }
                 );
@@ -1593,7 +1797,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ========================================
-    // MODAL OVERLAY CLOSE
+    // MODAL OVERLAY
     // ========================================
 
     document
@@ -1613,7 +1817,9 @@ document.addEventListener("DOMContentLoaded", function () {
                             );
 
 
-                        closeModal(modal);
+                        closeModal(
+                            modal
+                        );
 
                     }
                 );
@@ -1623,15 +1829,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ========================================
-    // ESC KEY CLOSE
+    // ESC KEY
     // ========================================
 
     document.addEventListener(
         "keydown",
         function (event) {
 
-            if (event.key !== "Escape") {
+            if (
+                event.key !==
+                "Escape"
+            ) {
+
                 return;
+
             }
 
 
@@ -1642,7 +1853,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 .forEach(
                     function (modal) {
 
-                        closeModal(modal);
+                        closeModal(
+                            modal
+                        );
 
                     }
                 );
@@ -1758,8 +1971,8 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
         }
-    );              
-       // ========================================
+    );
+        // ========================================
     // ADDITIONAL COST EVENTS
     // ========================================
 
@@ -1789,4 +2002,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
     renderApp();
 
-}); 
+});
