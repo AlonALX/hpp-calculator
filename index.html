@@ -347,78 +347,24 @@
                 Harga disarankan dibulatkan ke Rp100 terdekat agar lebih praktis digunakan.
             </div>
 
-            <h3>Simulasi Diskon</h3>
+            <div class="pricing-actions">
+                <button type="button" class="pricing-action-card" id="openDiscountSimulatorButton">
+                    <span class="pricing-action-icon">% </span>
+                    <span class="pricing-action-copy">
+                        <strong>Simulasi Diskon</strong>
+                        <small>Lihat dampak diskon terhadap profit</small>
+                    </span>
+                    <span class="pricing-action-arrow">›</span>
+                </button>
 
-            <div class="form-group">
-                <label for="discountPercentInput">Diskon (%)</label>
-                <input
-                    type="number"
-                    id="discountPercentInput"
-                    min="0"
-                    max="100"
-                    step="1"
-                    inputmode="decimal"
-                    value="0"
-                >
-            </div>
-
-            <div class="result-box">
-                <div class="result-item">
-                    <span>Harga setelah diskon</span>
-                    <strong id="promoFinalPrice">Rp0</strong>
-                </div>
-                <div class="result-item">
-                    <span>Profit / unit</span>
-                    <strong id="promoProfit">Rp0</strong>
-                </div>
-                <div class="result-item">
-                    <span>Margin</span>
-                    <strong id="promoMargin">0%</strong>
-                </div>
-            </div>
-
-            <div id="promoStatus" class="pricing-status break-even">⚪ Break-even</div>
-
-            <div class="result-item">
-                <span>Break-even price</span>
-                <strong id="breakEvenPrice">Rp0</strong>
-            </div>
-
-            <h3>Diskon Maksimum</h3>
-
-            <div class="form-group">
-                <label for="minimumMarginInput">Minimum margin yang ingin dipertahankan (%)</label>
-                <input
-                    type="number"
-                    id="minimumMarginInput"
-                    min="0"
-                    max="99"
-                    step="1"
-                    inputmode="decimal"
-                    value="0"
-                >
-            </div>
-
-            <div class="result-item">
-                <span>Diskon maksimum</span>
-                <strong id="maximumDiscountMargin">0%</strong>
-            </div>
-
-            <div class="form-group">
-                <label for="minimumProfitInput">Minimum profit / unit yang ingin dipertahankan</label>
-                <input
-                    type="number"
-                    id="minimumProfitInput"
-                    min="0"
-                    step="100"
-                    inputmode="numeric"
-                    value="0"
-                >
-            </div>
-
-            <div class="result-item">
-                <span>Diskon maksimum</span>
-                <strong id="maximumDiscountProfit">0%</strong>
+                <button type="button" class="pricing-action-card" id="openMaximumDiscountButton">
+                    <span class="pricing-action-icon">⌁</span>
+                    <span class="pricing-action-copy">
+                        <strong>Diskon Maksimum</strong>
+                        <small>Cari batas diskon yang masih aman</small>
+                    </span>
+                    <span class="pricing-action-arrow">›</span>
+                </button>
             </div>
 
         </section>
@@ -427,6 +373,72 @@
     </main>
 
 
+
+    <!-- ================================= -->
+    <!-- DISCOUNT SIMULATOR MODAL -->
+    <!-- ================================= -->
+
+    <div id="discountSimulatorModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content pricing-modal">
+            <div class="modal-header">
+                <div>
+                    <span class="section-label">PROMO</span>
+                    <h2>Simulasi Diskon</h2>
+                </div>
+                <button type="button" class="modal-close" data-close-modal="discountSimulatorModal" aria-label="Tutup">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="discountPercentInput">Diskon (%)</label>
+                    <input type="number" id="discountPercentInput" min="0" max="100" step="1" inputmode="decimal" value="0">
+                </div>
+
+                <div class="pricing-metrics">
+                    <div class="result-item"><span>Harga setelah diskon</span><strong id="promoFinalPrice">Rp0</strong></div>
+                    <div class="result-item"><span>Profit / unit</span><strong id="promoProfit">Rp0</strong></div>
+                    <div class="result-item"><span>Margin</span><strong id="promoMargin">0%</strong></div>
+                </div>
+
+                <div id="promoStatus" class="pricing-status break-even">⚪ Break-even</div>
+
+                <div class="result-item pricing-break-even">
+                    <span>Break-even price</span>
+                    <strong id="breakEvenPrice">Rp0</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================= -->
+    <!-- MAXIMUM DISCOUNT MODAL -->
+    <!-- ================================= -->
+
+    <div id="maximumDiscountModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content pricing-modal">
+            <div class="modal-header">
+                <div>
+                    <span class="section-label">BATAS PROMO</span>
+                    <h2>Diskon Maksimum</h2>
+                </div>
+                <button type="button" class="modal-close" data-close-modal="maximumDiscountModal" aria-label="Tutup">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="minimumMarginInput">Minimum margin yang ingin dipertahankan (%)</label>
+                    <input type="number" id="minimumMarginInput" min="0" max="99" step="1" inputmode="decimal" value="0">
+                    <div class="result-item compact-result"><span>Diskon maksimum</span><strong id="maximumDiscountMargin">0%</strong></div>
+                </div>
+
+                <div class="form-group maximum-profit-group">
+                    <label for="minimumProfitInput">Minimum profit / unit yang ingin dipertahankan</label>
+                    <input type="number" id="minimumProfitInput" min="0" step="100" inputmode="numeric" value="0">
+                    <div class="result-item compact-result"><span>Diskon maksimum</span><strong id="maximumDiscountProfit">0%</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ================================= -->
     <!-- PRODUCT MODAL -->

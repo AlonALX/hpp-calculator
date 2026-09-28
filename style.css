@@ -964,3 +964,124 @@ input::placeholder {
         padding-top: 34px;
     }
 }
+
+/* ========================================
+   PRICING ACTIONS / COMPACT POPUPS
+======================================== */
+
+.pricing-actions {
+    display: grid;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.pricing-action-card {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 42px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.pricing-action-card:hover {
+    border-color: #c9c2ff;
+    background: #fbfaff;
+}
+
+.pricing-action-card:active {
+    transform: scale(0.99);
+}
+
+.pricing-action-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: #f0efff;
+    color: #5549b7;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.pricing-action-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.pricing-action-copy strong {
+    font-size: 14px;
+    line-height: 1.25;
+}
+
+.pricing-action-copy small {
+    color: var(--text-muted);
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.pricing-action-arrow {
+    color: var(--text-soft);
+    font-size: 25px;
+    line-height: 1;
+}
+
+.pricing-modal .modal-header {
+    background: #f7f6ff;
+}
+
+.pricing-modal .modal-header h2 {
+    margin-top: 3px;
+}
+
+.pricing-modal .modal-body {
+    padding-top: 20px;
+}
+
+.pricing-metrics {
+    margin-top: 18px;
+    border-top: 1px solid var(--line);
+}
+
+.pricing-metrics .result-item,
+.compact-result,
+.pricing-break-even {
+    min-height: 52px;
+}
+
+.compact-result {
+    margin-top: 8px;
+    padding: 10px 0 0;
+    border-top: 1px solid var(--line);
+}
+
+.maximum-profit-group {
+    margin-top: 24px;
+}
+
+.pricing-break-even {
+    margin-top: 4px;
+    border-top: 1px solid var(--line);
+}
+
+@media (max-width: 600px) {
+    .pricing-action-card {
+        grid-template-columns: 38px 1fr auto;
+        padding: 12px;
+    }
+
+    .pricing-action-icon {
+        width: 38px;
+        height: 38px;
+    }
+}

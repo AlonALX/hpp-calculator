@@ -506,6 +506,14 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("minimumProfitInput");
     const maximumDiscountProfitElement =
         document.getElementById("maximumDiscountProfit");
+    const discountSimulatorModal =
+        document.getElementById("discountSimulatorModal");
+    const maximumDiscountModal =
+        document.getElementById("maximumDiscountModal");
+    const openDiscountSimulatorButton =
+        document.getElementById("openDiscountSimulatorButton");
+    const openMaximumDiscountButton =
+        document.getElementById("openMaximumDiscountButton");
 
 
     // ========================================
@@ -3270,6 +3278,20 @@ document.addEventListener("DOMContentLoaded", function () {
     // ========================================
     // SELLING PRICE ASSISTANT EVENTS
     // ========================================
+
+    if (openDiscountSimulatorButton) {
+        openDiscountSimulatorButton.addEventListener("click", function () {
+            renderPricingAssistant();
+            openModal(discountSimulatorModal);
+        });
+    }
+
+    if (openMaximumDiscountButton) {
+        openMaximumDiscountButton.addEventListener("click", function () {
+            renderPricingAssistant();
+            openModal(maximumDiscountModal);
+        });
+    }
 
     [
         targetMarginInput,
