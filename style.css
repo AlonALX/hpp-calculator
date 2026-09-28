@@ -582,3 +582,120 @@ input::placeholder {
     font-size: 14px;
     color: #4b5563;
 }
+
+/* ========================================
+   DETAILED COST EDITOR
+======================================== */
+
+.detailed-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.detailed-component-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.detailed-component-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fafafa;
+}
+
+.detailed-component-actions {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.danger-text {
+    color: #dc2626;
+}
+
+.detailed-empty-state {
+    padding: 12px;
+    border: 1px dashed #d1d5db;
+    border-radius: 10px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.detailed-form-box {
+    padding: 13px;
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+    background: #f8fbff;
+}
+
+.detailed-save-component-button {
+    width: 100%;
+}
+
+.detailed-total-preview {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    background: #f3f4f6;
+    font-size: 14px;
+}
+
+.detailed-total-preview strong {
+    font-size: 16px;
+}
+
+.detailed-switch-button {
+    width: 100%;
+}
+
+.detailed-summary-card {
+    padding: 13px;
+    border: 1px solid #e5e7eb;
+    border-radius: 11px;
+    background: #fafafa;
+}
+
+.detailed-summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.detailed-summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 12px;
+}
+
+.detailed-summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+}
+
+.detailed-summary-total {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+    padding-top: 11px;
+    border-top: 1px solid #d1d5db;
+}
+
+.detailed-summary-total strong {
+    font-size: 16px;
+}
