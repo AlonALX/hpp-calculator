@@ -15,24 +15,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // User memilih golongan; tarif otomatis diambil dari daftar ini.
     // Acuan tarif: PLN/ESDM Q3 2026 (Juli-September 2026).
     const ELECTRICITY_TARIFF_OPTIONS = [
-        {
-            id: "B1_1300",
-            label: "B-1/TR — 1.300 VA",
-            tariff: 966
-        },
-        {
-            id: "B1_2200_5500",
-            label: "B-1/TR — 2.200–5.500 VA",
-            tariff: 1100
-        },
-        {
-            id: "B2_6600_200K",
-            label: "B-2/TR — 6.600 VA–200 kVA",
-            tariff: 1444.70
-        }
+        // Rumah Tangga (R)
+        { id: "R1_450_SUB", label: "R-1/TR — 450 VA (Subsidi)", tariff: 415 },
+        { id: "R1_900_SUB", label: "R-1/TR — 900 VA (Subsidi)", tariff: 605 },
+        { id: "R1_900_NON_SUB", label: "R-1/TR — 900 VA (Nonsubsidi)", tariff: 1352 },
+        { id: "R1_1300", label: "R-1/TR — 1.300 VA", tariff: 1444.70 },
+        { id: "R1_2200", label: "R-1/TR — 2.200 VA", tariff: 1444.70 },
+        { id: "R2_3500_5500", label: "R-2/TR — 3.500–5.500 VA", tariff: 1699.53 },
+        { id: "R3_6600_PLUS", label: "R-3/TR — ≥6.600 VA", tariff: 1699.53 },
+
+        // Bisnis (B)
+        { id: "B1_1300", label: "B-1/TR — 1.300 VA", tariff: 966 },
+        { id: "B1_2200_5500", label: "B-1/TR — 2.200–5.500 VA", tariff: 1100 },
+        { id: "B2_6600_200K", label: "B-2/TR — 6.600 VA–200 kVA", tariff: 1444.70 }
     ];
 
-    const DEFAULT_ELECTRICITY_CLASS = "B2_6600_200K";
+    const DEFAULT_ELECTRICITY_CLASS = "R1_1300";
 
     // Mengambil tarif berdasarkan ID golongan listrik.
     function getElectricityTariff(classId) {
@@ -76,6 +74,12 @@ document.addEventListener("DOMContentLoaded", function () {
             packaging: null,
             labor: null
         }
+    },
+    pricingAssistant: {
+        targetMargin: 40,
+        discountPercent: 0,
+        minimumMargin: 0,
+        minimumProfit: 0
     }
 };
 
@@ -198,7 +202,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     : [],
 
             additionalCosts:
-                additionalCosts
+                additionalCosts,
+
+            pricingAssistant: {
+                ...defaultState.pricingAssistant,
+                ...(parsed.pricingAssistant || {})
+            }
 
         };
 
@@ -264,6 +273,25 @@ document.addEventListener("DOMContentLoaded", function () {
             : [];
     state.additionalCosts.detailed.labor =
         state.additionalCosts.detailed.labor || null;
+
+    // Menjamin konfigurasi Selling Price Assistant selalu memiliki nilai valid.
+    state.pricingAssistant = state.pricingAssistant || {};
+    state.pricingAssistant.targetMargin =
+        Number.isFinite(Number(state.pricingAssistant.targetMargin))
+            ? Number(state.pricingAssistant.targetMargin)
+            : 40;
+    state.pricingAssistant.discountPercent =
+        Number.isFinite(Number(state.pricingAssistant.discountPercent))
+            ? Number(state.pricingAssistant.discountPercent)
+            : 0;
+    state.pricingAssistant.minimumMargin =
+        Number.isFinite(Number(state.pricingAssistant.minimumMargin))
+            ? Number(state.pricingAssistant.minimumMargin)
+            : 0;
+    state.pricingAssistant.minimumProfit =
+        Number.isFinite(Number(state.pricingAssistant.minimumProfit))
+            ? Number(state.pricingAssistant.minimumProfit)
+            : 0;
 
     let editingIngredientId = null;
 
@@ -449,6 +477,35 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById(
             "hppPerUnit"
         );
+
+    const targetMarginInput =
+        document.getElementById("targetMarginInput");
+    const suggestedPriceElement =
+        document.getElementById("suggestedPrice");
+    const suggestedProfitElement =
+        document.getElementById("suggestedProfit");
+    const suggestedMarginElement =
+        document.getElementById("suggestedMargin");
+    const discountPercentInput =
+        document.getElementById("discountPercentInput");
+    const promoFinalPriceElement =
+        document.getElementById("promoFinalPrice");
+    const promoProfitElement =
+        document.getElementById("promoProfit");
+    const promoMarginElement =
+        document.getElementById("promoMargin");
+    const promoStatusElement =
+        document.getElementById("promoStatus");
+    const breakEvenPriceElement =
+        document.getElementById("breakEvenPrice");
+    const minimumMarginInput =
+        document.getElementById("minimumMarginInput");
+    const maximumDiscountMarginElement =
+        document.getElementById("maximumDiscountMargin");
+    const minimumProfitInput =
+        document.getElementById("minimumProfitInput");
+    const maximumDiscountProfitElement =
+        document.getElementById("maximumDiscountProfit");
 
 
     // ========================================
@@ -1389,6 +1446,149 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ========================================
+    // SELLING PRICE ASSISTANT
+    // ========================================
+
+    // Menghitung harga jual dari target gross margin.
+    function calculatePriceFromMargin(hpp, marginPercent) {
+        const cost = Number(hpp) || 0;
+        const margin = Number(marginPercent) || 0;
+
+        if (cost <= 0 || margin < 0 || margin >= 100) {
+            return 0;
+        }
+
+        return cost / (1 - margin / 100);
+    }
+
+    // Membulatkan harga ke angka praktis Rp100 terdekat.
+    function roundSellingPrice(price) {
+        const value = Number(price) || 0;
+        if (value <= 0) return 0;
+        return Math.ceil(value / 100) * 100;
+    }
+
+    // Menghitung profit per unit dan margin dari harga jual.
+    function calculatePriceMetrics(price, hpp) {
+        const sellingPrice = Number(price) || 0;
+        const cost = Number(hpp) || 0;
+        const profit = sellingPrice - cost;
+        const margin = sellingPrice > 0 ? (profit / sellingPrice) * 100 : 0;
+
+        return {
+            profit: profit,
+            margin: margin
+        };
+    }
+
+    // Menghitung harga setelah diskon.
+    function calculatePromoPrice(price, discountPercent) {
+        const normalPrice = Number(price) || 0;
+        const discount = Math.min(100, Math.max(0, Number(discountPercent) || 0));
+        return normalPrice * (1 - discount / 100);
+    }
+
+    // Menghitung diskon maksimum agar margin minimum tetap tercapai.
+    function calculateMaximumDiscountForMargin(price, hpp, minimumMargin) {
+        const normalPrice = Number(price) || 0;
+        const cost = Number(hpp) || 0;
+        const minimum = Math.min(100, Math.max(0, Number(minimumMargin) || 0));
+
+        if (normalPrice <= 0) return 0;
+
+        const minimumPrice = calculatePriceFromMargin(cost, minimum);
+        if (minimumPrice <= 0 || minimumPrice > normalPrice) return 0;
+
+        return Math.max(0, Math.min(100, (1 - minimumPrice / normalPrice) * 100));
+    }
+
+    // Menghitung diskon maksimum agar profit minimum per unit tetap tercapai.
+    function calculateMaximumDiscountForProfit(price, hpp, minimumProfit) {
+        const normalPrice = Number(price) || 0;
+        const cost = Number(hpp) || 0;
+        const minimum = Math.max(0, Number(minimumProfit) || 0);
+
+        if (normalPrice <= 0) return 0;
+
+        const minimumPrice = cost + minimum;
+        if (minimumPrice > normalPrice) return 0;
+
+        return Math.max(0, Math.min(100, (1 - minimumPrice / normalPrice) * 100));
+    }
+
+    // Menentukan status promo berdasarkan profit setelah diskon.
+    function getPromoStatus(profit) {
+        if (profit > 0) {
+            return { label: "🟢 Masih profit", className: "profit" };
+        }
+
+        if (Math.abs(profit) < 0.005) {
+            return { label: "⚪ Break-even", className: "break-even" };
+        }
+
+        return { label: "🔴 Rugi", className: "loss" };
+    }
+
+    // Merender seluruh Selling Price Assistant berdasarkan HPP saat ini.
+    function renderPricingAssistant() {
+        const hpp = getHppPerUnit();
+        const targetMargin = Number(state.pricingAssistant.targetMargin) || 0;
+        const discount = Number(state.pricingAssistant.discountPercent) || 0;
+        const minimumMargin = Number(state.pricingAssistant.minimumMargin) || 0;
+        const minimumProfit = Number(state.pricingAssistant.minimumProfit) || 0;
+
+        const exactSuggestedPrice = calculatePriceFromMargin(hpp, targetMargin);
+        const suggestedPrice = roundSellingPrice(exactSuggestedPrice);
+        const suggestedMetrics = calculatePriceMetrics(suggestedPrice, hpp);
+        const promoPrice = calculatePromoPrice(suggestedPrice, discount);
+        const promoMetrics = calculatePriceMetrics(promoPrice, hpp);
+        const status = getPromoStatus(promoMetrics.profit);
+        const maxMarginDiscount = calculateMaximumDiscountForMargin(
+            suggestedPrice, hpp, minimumMargin
+        );
+        const maxProfitDiscount = calculateMaximumDiscountForProfit(
+            suggestedPrice, hpp, minimumProfit
+        );
+
+        if (targetMarginInput) targetMarginInput.value = targetMargin;
+        if (suggestedPriceElement) suggestedPriceElement.textContent = formatRupiah(suggestedPrice);
+        if (suggestedProfitElement) suggestedProfitElement.textContent = formatRupiah(suggestedMetrics.profit);
+        if (suggestedMarginElement) suggestedMarginElement.textContent = `${suggestedMetrics.margin.toFixed(1)}%`;
+        if (discountPercentInput) discountPercentInput.value = discount;
+        if (promoFinalPriceElement) promoFinalPriceElement.textContent = formatRupiah(promoPrice);
+        if (promoProfitElement) promoProfitElement.textContent = formatRupiah(promoMetrics.profit);
+        if (promoMarginElement) promoMarginElement.textContent = `${promoMetrics.margin.toFixed(1)}%`;
+        if (breakEvenPriceElement) breakEvenPriceElement.textContent = formatRupiah(hpp);
+        if (promoStatusElement) {
+            promoStatusElement.textContent = status.label;
+            promoStatusElement.className = `pricing-status ${status.className}`;
+        }
+        if (minimumMarginInput) minimumMarginInput.value = minimumMargin;
+        if (maximumDiscountMarginElement) maximumDiscountMarginElement.textContent = `${maxMarginDiscount.toFixed(1)}%`;
+        if (minimumProfitInput) minimumProfitInput.value = minimumProfit;
+        if (maximumDiscountProfitElement) maximumDiscountProfitElement.textContent = `${maxProfitDiscount.toFixed(1)}%`;
+    }
+
+    // Menyimpan perubahan input Selling Price Assistant ke localStorage.
+    function updatePricingState() {
+        if (targetMarginInput) {
+            state.pricingAssistant.targetMargin = Math.min(99, Math.max(0, Number(targetMarginInput.value) || 0));
+        }
+        if (discountPercentInput) {
+            state.pricingAssistant.discountPercent = Math.min(100, Math.max(0, Number(discountPercentInput.value) || 0));
+        }
+        if (minimumMarginInput) {
+            state.pricingAssistant.minimumMargin = Math.min(99, Math.max(0, Number(minimumMarginInput.value) || 0));
+        }
+        if (minimumProfitInput) {
+            state.pricingAssistant.minimumProfit = Math.max(0, Number(minimumProfitInput.value) || 0);
+        }
+
+        saveState();
+        renderPricingAssistant();
+    }
+
+    // ========================================
     // RENDER APP
     // ========================================
 
@@ -1401,6 +1601,8 @@ document.addEventListener("DOMContentLoaded", function () {
         renderAdditionalCost();
 
         renderResults();
+
+        renderPricingAssistant();
 
     }
 
@@ -2990,6 +3192,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
+    // ========================================
+    // SELLING PRICE ASSISTANT EVENTS
+    // ========================================
+
+    [
+        targetMarginInput,
+        discountPercentInput,
+        minimumMarginInput,
+        minimumProfitInput
+    ].forEach(function (input) {
+        if (!input) return;
+
+        input.addEventListener("input", updatePricingState);
+        input.addEventListener("change", updatePricingState);
+    });
 
     // ========================================
     // INITIAL RENDER

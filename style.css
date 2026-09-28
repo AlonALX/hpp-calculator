@@ -713,3 +713,29 @@ input::placeholder {
 .detailed-summary-total strong {
     font-size: 16px;
 }
+
+
+/* Selling Price Assistant */
+.pricing-card h3 {
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
+.pricing-status {
+    margin: 14px 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+.pricing-status.profit {
+    background: #eaf8ee;
+}
+
+.pricing-status.break-even {
+    background: #f3f4f6;
+}
+
+.pricing-status.loss {
+    background: #fdecec;
+}
