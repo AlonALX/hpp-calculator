@@ -1,6 +1,29 @@
 /* ========================================
-   BASIC
+   HPP CALCULATOR — MODERN VISUAL SYSTEM
+   UI-only redesign. Calculation logic untouched.
 ======================================== */
+
+:root {
+    --bg: #f6f7fb;
+    --surface: #ffffff;
+    --surface-soft: #f8f9fc;
+    --text: #171923;
+    --text-soft: #667085;
+    --text-muted: #98a2b3;
+    --line: #eaecf0;
+    --primary: #635bff;
+    --primary-dark: #5148e8;
+    --primary-soft: #f0efff;
+    --success: #12b76a;
+    --success-soft: #ecfdf3;
+    --danger: #f04438;
+    --danger-soft: #fef3f2;
+    --neutral-soft: #f2f4f7;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+    --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.03), 0 8px 28px rgba(16, 24, 40, 0.045);
+}
 
 * {
     box-sizing: border-box;
@@ -12,59 +35,74 @@ html {
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f5f7fa;
-    color: #1f2937;
+    font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
     line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
 body.modal-open {
     overflow: hidden;
 }
 
-.container {
-    width: min(100% - 20px, 760px);
-    margin: 0 auto;
+button,
+input,
+select {
+    font: inherit;
 }
 
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.container {
+    width: min(100% - 32px, 760px);
+    margin: 0 auto;
+}
 
 /* ========================================
    HEADER
 ======================================== */
 
 .header {
-    background: #ffffff;
-    padding: 24px 0 20px;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 28px 0 18px;
+    background: var(--bg);
 }
 
 .header h1 {
-    margin: 0 0 6px;
-    font-size: 28px;
+    margin: 0 0 4px;
+    font-size: 27px;
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+    font-weight: 800;
 }
 
 .header p {
     margin: 0;
-    color: #6b7280;
-    font-size: 15px;
+    color: var(--text-soft);
+    font-size: 14px;
 }
 
-
 /* ========================================
-   CARD
+   CARDS / SECTIONS
 ======================================== */
 
 .card {
-    background: #ffffff;
-    margin-top: 16px;
-    padding: 18px;
-    border-radius: 14px;
-    border: 1px solid #e5e7eb;
+    margin-top: 14px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
 }
 
 .card h2 {
-    margin: 3px 0 0;
-    font-size: 20px;
+    margin: 4px 0 0;
+    font-size: 18px;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    font-weight: 750;
 }
 
 .section-header {
@@ -77,12 +115,12 @@ body.modal-open {
 
 .section-label {
     display: block;
-    color: #6b7280;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-size: 10px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: 0.11em;
 }
-
 
 /* ========================================
    BUTTONS
@@ -90,39 +128,48 @@ body.modal-open {
 
 .button {
     min-height: 46px;
-    border: none;
-    border-radius: 9px;
-    padding: 10px 16px;
-    font-size: 15px;
-    font-weight: 600;
+    border: 0;
+    border-radius: 12px;
+    padding: 11px 16px;
+    font-size: 14px;
+    font-weight: 700;
     cursor: pointer;
+    transition: transform 120ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.button:active,
+.icon-button:active,
+.edit-text-button:active,
+.ingredient-edit-button:active {
+    transform: translateY(1px);
 }
 
 .button.primary {
-    background: #2563eb;
-    color: #ffffff;
+    color: #fff;
+    background: var(--primary);
+    box-shadow: 0 5px 14px rgba(99, 91, 255, 0.2);
 }
 
 .button.primary:hover {
-    background: #1d4ed8;
+    background: var(--primary-dark);
 }
 
 .button.secondary {
-    background: #eef2ff;
-    color: #3730a3;
+    color: var(--primary);
+    background: var(--primary-soft);
 }
 
 .button.secondary:hover {
-    background: #e0e7ff;
+    background: #e9e7ff;
 }
 
 .button.danger {
-    background: #fff1f2;
-    color: #b91c1c;
+    color: var(--danger);
+    background: var(--danger-soft);
 }
 
 .button.danger:hover {
-    background: #ffe4e6;
+    background: #fee4e2;
 }
 
 .full-width {
@@ -131,26 +178,25 @@ body.modal-open {
 }
 
 .icon-button {
-    width: 42px;
-    height: 42px;
-    border: 1px solid #dbeafe;
-    border-radius: 9px;
-    background: #eff6ff;
-    color: #2563eb;
-    font-size: 18px;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #e4e1ff;
+    border-radius: 12px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 17px;
     cursor: pointer;
     flex-shrink: 0;
 }
 
-
 /* ========================================
-   EMPTY STATE
+   EMPTY STATES
 ======================================== */
 
 .empty-state {
-    padding: 22px 10px;
+    padding: 26px 12px 20px;
     text-align: center;
-    color: #6b7280;
+    color: var(--text-soft);
 }
 
 .empty-state.compact {
@@ -158,124 +204,123 @@ body.modal-open {
 }
 
 .empty-icon {
-    width: 42px;
-    height: 42px;
-    margin: 0 auto 10px;
-    border-radius: 50%;
-    background: #eef2ff;
-    color: #4f46e5;
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 11px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    border-radius: 14px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 23px;
+    font-weight: 500;
 }
 
 .empty-state strong {
     display: block;
-    color: #374151;
     margin-bottom: 4px;
+    color: var(--text);
+    font-size: 15px;
 }
 
 .empty-state p {
-    margin: 0 0 14px;
-    font-size: 14px;
+    max-width: 330px;
+    margin: 0 auto 15px;
+    font-size: 13px;
 }
 
-
 /* ========================================
-   DISPLAY PRODUCT
+   PRODUCT DISPLAY
 ======================================== */
 
 .product-display-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
+    padding: 2px 0;
 }
 
 .product-name {
     margin: 0;
+    color: var(--text);
     font-size: 21px;
-    font-weight: 700;
-    color: #111827;
+    line-height: 1.25;
+    font-weight: 800;
+    letter-spacing: -0.025em;
 }
 
 .product-yield {
     margin-top: 4px;
-    color: #6b7280;
-    font-size: 14px;
+    color: var(--text-soft);
+    font-size: 13px;
 }
 
-.edit-text-button {
-    border: none;
+.edit-text-button,
+.ingredient-edit-button {
+    border: 0;
     background: transparent;
-    color: #2563eb;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 8px;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px;
     cursor: pointer;
 }
 
-
 /* ========================================
-   INGREDIENT LIST
+   INGREDIENTS
 ======================================== */
 
 .ingredient-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
 }
 
 .ingredient-item {
-    border: 1px solid #e5e7eb;
-    border-radius: 11px;
-    padding: 13px;
-    background: #fafafa;
+    padding: 14px 2px;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+}
+
+.ingredient-item:last-child {
+    border-bottom: 0;
 }
 
 .ingredient-main {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 10px;
+    gap: 12px;
 }
 
 .ingredient-name-display {
+    color: var(--text);
+    font-size: 14px;
     font-weight: 700;
-    color: #111827;
 }
 
 .ingredient-usage-display {
     margin-top: 3px;
-    color: #6b7280;
-    font-size: 14px;
+    color: var(--text-soft);
+    font-size: 12px;
 }
 
 .ingredient-cost-display {
-    margin-top: 8px;
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.ingredient-edit-button {
-    border: none;
-    background: transparent;
-    color: #2563eb;
-    font-weight: 600;
+    margin-top: 4px;
+    color: var(--text);
     font-size: 14px;
-    padding: 6px;
-    cursor: pointer;
-    flex-shrink: 0;
+    font-weight: 750;
 }
-
 
 /* ========================================
-   FORM
+   FORMS
 ======================================== */
 
 .form-group {
-    margin-bottom: 14px;
+    margin-bottom: 15px;
 }
 
 .form-group:last-child {
@@ -285,30 +330,33 @@ body.modal-open {
 label {
     display: block;
     margin-bottom: 6px;
-    font-size: 14px;
-    font-weight: 600;
+    color: #344054;
+    font-size: 13px;
+    font-weight: 700;
 }
 
 input,
 select {
     width: 100%;
-    min-height: 46px;
-    padding: 10px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 9px;
+    min-height: 48px;
+    padding: 11px 13px;
+    border: 1px solid #d0d5dd;
+    border-radius: 12px;
+    outline: none;
+    background: #fff;
+    color: var(--text);
     font-size: 16px;
-    background: #ffffff;
-    color: #1f2937;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
 input:focus,
 select:focus {
-    outline: none;
-    border-color: #2563eb;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
 }
 
 input::placeholder {
-    color: #9ca3af;
+    color: #b0b7c3;
 }
 
 .form-row {
@@ -318,27 +366,17 @@ input::placeholder {
 }
 
 .helper-text {
-    color: #6b7280;
-    font-size: 14px;
+    margin-top: 6px;
+    color: var(--text-soft);
+    font-size: 12px;
 }
 
-
-/* ========================================
-   GLOBAL HIDDEN STATE
-======================================== */
-
-/*
- * Menyembunyikan elemen yang sedang tidak aktif.
- * Dipakai untuk pergantian mode Simple/Detailed
- * tanpa menghapus nilai yang tersimpan.
- */
 .hidden {
     display: none !important;
 }
 
-
 /* ========================================
-   MODAL
+   MODALS / BOTTOM SHEETS
 ======================================== */
 
 .modal {
@@ -357,7 +395,8 @@ input::placeholder {
 .modal-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(17, 24, 39, 0.55);
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(3px);
 }
 
 .modal-content {
@@ -366,9 +405,15 @@ input::placeholder {
     width: min(100%, 600px);
     max-height: 92vh;
     overflow-y: auto;
-    background: #ffffff;
-    border-radius: 18px 18px 0 0;
-    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.15);
+    background: var(--surface);
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -12px 40px rgba(16, 24, 40, 0.16);
+    animation: sheet-up 180ms ease-out;
+}
+
+@keyframes sheet-up {
+    from { transform: translateY(12px); opacity: 0.85; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 .modal-header {
@@ -376,70 +421,68 @@ input::placeholder {
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    padding: 18px;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 18px 20px 15px;
+    border-bottom: 1px solid var(--line);
 }
 
 .modal-header h2 {
     margin: 0;
-    font-size: 19px;
+    font-size: 18px;
+    letter-spacing: -0.02em;
 }
 
 .modal-close {
     width: 38px;
     height: 38px;
-    border: none;
+    border: 0;
     border-radius: 50%;
-    background: #f3f4f6;
-    color: #374151;
-    font-size: 24px;
+    background: var(--neutral-soft);
+    color: #475467;
+    font-size: 22px;
     line-height: 1;
     cursor: pointer;
 }
 
 .modal-body {
-    padding: 18px;
+    padding: 19px 20px;
 }
 
 .modal-footer {
     display: flex;
-    gap: 8px;
-    padding: 14px 18px;
-    border-top: 1px solid #e5e7eb;
+    gap: 9px;
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.96);
 }
 
 .modal-footer .button {
     flex: 1;
 }
 
-
 /* ========================================
-   CALCULATION PREVIEW
+   CALCULATION / VALIDATION
 ======================================== */
 
 .calculation-preview {
     margin-top: 8px;
-    padding: 12px;
-    border-radius: 9px;
-    background: #f3f4f6;
-    font-size: 14px;
+    padding: 13px;
+    border-radius: 12px;
+    background: var(--surface-soft);
+    color: var(--text-soft);
+    font-size: 13px;
 }
 
 .calculation-preview strong {
+    color: var(--text);
     font-size: 16px;
 }
 
-
-/* ========================================
-   VALIDATION
-======================================== */
-
 .validation-message {
     margin-top: 10px;
-    padding: 10px;
-    border-radius: 8px;
-    background: #fff1f2;
-    color: #b91c1c;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--danger-soft);
+    color: #b42318;
     font-size: 13px;
 }
 
@@ -447,15 +490,24 @@ input::placeholder {
     display: none;
 }
 
-
 /* ========================================
-   RESULT
+   HPP RESULT — PRIMARY FOCAL POINT
 ======================================== */
 
+.result-card {
+    overflow: hidden;
+    border-color: #dedbff;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfaff 100%);
+}
+
+.result-card > .section-label {
+    color: var(--primary);
+}
+
 .result-box {
-    background: #f9fafb;
-    border-radius: 10px;
-    padding: 14px;
+    margin-top: 16px;
+    padding: 5px 0 0;
+    background: transparent;
 }
 
 .result-item {
@@ -463,143 +515,94 @@ input::placeholder {
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-    padding: 12px 0;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.result-item:last-child {
-    border-bottom: none;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
 }
 
 .result-item span {
-    color: #4b5563;
+    color: var(--text-soft);
+    font-size: 13px;
 }
 
 .result-item strong {
-    font-size: 17px;
+    color: var(--text);
+    font-size: 15px;
 }
 
 .result-item.highlight {
-    margin-top: 4px;
-    padding-top: 16px;
+    display: block;
+    margin: 12px 0 0;
+    padding: 18px;
+    border: 0;
+    border-radius: 16px;
+    background: var(--primary-soft);
 }
 
 .result-item.highlight span {
-    color: #111827;
-    font-weight: 700;
+    display: block;
+    color: #5049b8;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .result-item.highlight strong {
-    font-size: 23px;
+    display: block;
+    margin-top: 3px;
+    color: var(--text);
+    font-size: 30px;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
 }
 
 .result-note {
     margin-top: 12px;
-    padding: 12px;
-    border-radius: 9px;
-    background: #eff6ff;
-    color: #4b5563;
-    font-size: 13px;
+    padding: 11px 12px;
+    border-radius: 11px;
+    background: var(--neutral-soft);
+    color: var(--text-soft);
+    font-size: 12px;
 }
 
-
 /* ========================================
-   FOOTER
+   ADDITIONAL COSTS
 ======================================== */
 
-.footer {
-    padding: 30px 0;
-    color: #6b7280;
-    font-size: 13px;
-    text-align: center;
-}
-
-
-/* ========================================
-   MOBILE
-======================================== */
-
-@media (max-width: 600px) {
-
-    .container {
-        width: min(100% - 16px, 760px);
-    }
-
-    .header {
-        padding: 20px 0 17px;
-    }
-
-    .header h1 {
-        font-size: 24px;
-    }
-
-    .card {
-        padding: 16px;
-        border-radius: 12px;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-        gap: 0;
-    }
-
-    .product-display-card {
-        align-items: flex-start;
-    }
-
-    .modal-content {
-        max-height: 94vh;
-    }
-
-    .modal-footer {
-        position: sticky;
-        bottom: 0;
-        background: #ffffff;
-    }
-}
-
-
-/* ========================================
-   ADDITIONAL COST MODE
-======================================== */
-
-.cost-mode-card {
+.cost-mode-card,
+.detailed-summary-card {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
-    padding: 13px;
-    border: 1px solid #e5e7eb;
-    border-radius: 11px;
-    background: #fafafa;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface-soft);
 }
 
 .detailed-summary-card {
-    background: #ffffff;
+    display: block;
 }
 
 .detailed-mode-placeholder {
     padding: 14px;
-    border: 1px solid #dbeafe;
-    border-radius: 10px;
-    background: #eff6ff;
-    color: #374151;
+    border: 1px solid #e5e2ff;
+    border-radius: 12px;
+    background: #faf9ff;
+    color: #475467;
 }
 
 .detailed-mode-placeholder strong {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
+    color: var(--text);
 }
 
 .detailed-mode-placeholder p {
-    margin: 6px 0 0;
-    font-size: 14px;
-    color: #4b5563;
+    margin: 5px 0 0;
+    font-size: 13px;
 }
-
-/* ========================================
-   DETAILED COST EDITOR
-======================================== */
 
 .detailed-editor {
     display: flex;
@@ -610,7 +613,6 @@ input::placeholder {
 .detailed-component-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
 }
 
 .detailed-component-card {
@@ -618,10 +620,8 @@ input::placeholder {
     justify-content: space-between;
     align-items: flex-start;
     gap: 10px;
-    padding: 12px;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    background: #fafafa;
+    padding: 13px 2px;
+    border-bottom: 1px solid var(--line);
 }
 
 .detailed-component-actions {
@@ -631,25 +631,26 @@ input::placeholder {
 }
 
 .danger-text {
-    color: #dc2626;
+    color: var(--danger);
 }
 
 .detailed-empty-state {
-    padding: 12px;
-    border: 1px dashed #d1d5db;
-    border-radius: 10px;
-    color: #6b7280;
-    font-size: 14px;
+    padding: 14px;
+    border: 1px dashed #d0d5dd;
+    border-radius: 12px;
+    color: var(--text-soft);
+    font-size: 13px;
 }
 
 .detailed-form-box {
-    padding: 13px;
-    border: 1px solid #dbeafe;
-    border-radius: 10px;
-    background: #f8fbff;
+    padding: 14px;
+    border: 1px solid #e4e1ff;
+    border-radius: 14px;
+    background: #faf9ff;
 }
 
-.detailed-save-component-button {
+.detailed-save-component-button,
+.detailed-switch-button {
     width: 100%;
 }
 
@@ -657,25 +658,16 @@ input::placeholder {
     display: flex;
     justify-content: space-between;
     gap: 12px;
-    padding: 12px;
-    border-radius: 10px;
-    background: #f3f4f6;
-    font-size: 14px;
+    padding: 13px;
+    border-radius: 12px;
+    background: var(--neutral-soft);
+    color: var(--text-soft);
+    font-size: 13px;
 }
 
 .detailed-total-preview strong {
+    color: var(--text);
     font-size: 16px;
-}
-
-.detailed-switch-button {
-    width: 100%;
-}
-
-.detailed-summary-card {
-    padding: 13px;
-    border: 1px solid #e5e7eb;
-    border-radius: 11px;
-    background: #fafafa;
 }
 
 .detailed-summary-header {
@@ -688,17 +680,18 @@ input::placeholder {
 .detailed-summary-list {
     display: flex;
     flex-direction: column;
-    gap: 7px;
-    margin-top: 12px;
+    gap: 0;
+    margin-top: 10px;
 }
 
 .detailed-summary-row {
     display: flex;
     justify-content: space-between;
     gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid #e5e7eb;
-    font-size: 14px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--text-soft);
+    font-size: 13px;
 }
 
 .detailed-summary-total {
@@ -706,36 +699,118 @@ input::placeholder {
     justify-content: space-between;
     gap: 12px;
     margin-top: 10px;
-    padding-top: 11px;
-    border-top: 1px solid #d1d5db;
+    padding-top: 12px;
+    border-top: 1px solid #d0d5dd;
 }
 
 .detailed-summary-total strong {
     font-size: 16px;
 }
 
+/* ========================================
+   SELLING PRICE ASSISTANT
+======================================== */
 
-/* Selling Price Assistant */
+.pricing-card {
+    border-color: #dedbff;
+}
+
 .pricing-card h3 {
-    margin-top: 24px;
-    margin-bottom: 12px;
+    margin: 24px 0 12px;
+    font-size: 15px;
+    letter-spacing: -0.01em;
 }
 
 .pricing-status {
     margin: 14px 0;
     padding: 12px 14px;
     border-radius: 12px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 750;
 }
 
 .pricing-status.profit {
-    background: #eaf8ee;
+    background: var(--success-soft);
+    color: #067647;
 }
 
 .pricing-status.break-even {
-    background: #f3f4f6;
+    background: var(--neutral-soft);
+    color: #475467;
 }
 
 .pricing-status.loss {
-    background: #fdecec;
+    background: var(--danger-soft);
+    color: #b42318;
+}
+
+/* ========================================
+   FOOTER
+======================================== */
+
+.footer {
+    padding: 32px 0 calc(38px + env(safe-area-inset-bottom));
+    color: var(--text-muted);
+    font-size: 12px;
+    text-align: center;
+}
+
+/* ========================================
+   RESPONSIVE / MOBILE FIRST
+======================================== */
+
+@media (max-width: 600px) {
+    .container {
+        width: min(100% - 20px, 760px);
+    }
+
+    .header {
+        padding: 22px 0 14px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .card {
+        margin-top: 12px;
+        padding: 17px;
+        border-radius: 18px;
+    }
+
+    .card h2 {
+        font-size: 17px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .product-display-card {
+        align-items: flex-start;
+    }
+
+    .product-name {
+        font-size: 19px;
+    }
+
+    .modal-content {
+        max-height: 94vh;
+    }
+
+    .modal-footer {
+        position: sticky;
+        bottom: 0;
+    }
+
+    .result-item.highlight strong {
+        font-size: 29px;
+    }
+}
+
+@media (min-width: 601px) {
+    .header {
+        padding-top: 34px;
+    }
 }
