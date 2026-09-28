@@ -16,68 +16,23 @@ document.addEventListener("DOMContentLoaded", function () {
     // Acuan tarif: PLN/ESDM Q3 2026 (Juli-September 2026).
     const ELECTRICITY_TARIFF_OPTIONS = [
         {
-            id: "R1_450_SUBSIDIZED",
-            group: "R",
-            label: "R-1/TR — 450 VA (Subsidi)",
-            tariff: 415
-        },
-        {
-            id: "R1_900_SUBSIDIZED",
-            group: "R",
-            label: "R-1/TR — 900 VA (Subsidi)",
-            tariff: 605
-        },
-        {
-            id: "R1_900_NON_SUBSIDIZED",
-            group: "R",
-            label: "R-1/TR — 900 VA (Nonsubsidi)",
-            tariff: 1352
-        },
-        {
-            id: "R1_1300",
-            group: "R",
-            label: "R-1/TR — 1.300 VA",
-            tariff: 1444.70
-        },
-        {
-            id: "R1_2200",
-            group: "R",
-            label: "R-1/TR — 2.200 VA",
-            tariff: 1444.70
-        },
-        {
-            id: "R2_3500_5500",
-            group: "R",
-            label: "R-2/TR — 3.500–5.500 VA",
-            tariff: 1699.53
-        },
-        {
-            id: "R3_6600_PLUS",
-            group: "R",
-            label: "R-3/TR — ≥6.600 VA",
-            tariff: 1699.53
-        },
-        {
             id: "B1_1300",
-            group: "B",
             label: "B-1/TR — 1.300 VA",
             tariff: 966
         },
         {
             id: "B1_2200_5500",
-            group: "B",
             label: "B-1/TR — 2.200–5.500 VA",
             tariff: 1100
         },
         {
             id: "B2_6600_200K",
-            group: "B",
             label: "B-2/TR — 6.600 VA–200 kVA",
             tariff: 1444.70
         }
     ];
 
-    const DEFAULT_ELECTRICITY_CLASS = "R1_1300";
+    const DEFAULT_ELECTRICITY_CLASS = "B2_6600_200K";
 
     // Mengambil tarif berdasarkan ID golongan listrik.
     function getElectricityTariff(classId) {
@@ -2475,16 +2430,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="form-group">
                         <label for="electricityClassInput">Golongan listrik</label>
                         <select id="electricityClassInput">
-                            <optgroup label="Rumah Tangga (R)">
-                                ${ELECTRICITY_TARIFF_OPTIONS.filter(function (option) { return option.group === "R"; }).map(function (option) {
-                                    return `<option value="${option.id}" ${option.id === selectedClass ? "selected" : ""}>${option.label}</option>`;
-                                }).join("")}
-                            </optgroup>
-                            <optgroup label="Bisnis (B)">
-                                ${ELECTRICITY_TARIFF_OPTIONS.filter(function (option) { return option.group === "B"; }).map(function (option) {
-                                    return `<option value="${option.id}" ${option.id === selectedClass ? "selected" : ""}>${option.label}</option>`;
-                                }).join("")}
-                            </optgroup>
+                            ${ELECTRICITY_TARIFF_OPTIONS.map(function (option) {
+                                return `<option value="${option.id}" ${option.id === selectedClass ? "selected" : ""}>${option.label}</option>`;
+                            }).join("")}
                         </select>
                     </div>
                     <div class="form-group">
@@ -2611,8 +2559,10 @@ document.addEventListener("DOMContentLoaded", function () {
             "beforeend",
             `
                 <div class="form-group">
-                    <label for="packagingQuantityInput">Jumlah kemasan yang digunakan</label>
+                    <label for="packagingQuantityInput">Jumlah kemasan untuk 1 batch</label>
                     <input type="number" id="packagingQuantityInput" min="0" step="any" inputmode="decimal" value="${old.quantityUsed || ""}" placeholder="Contoh: 20">
+                    <div class="helper-text">Masukkan jumlah box, cup, bungkus, atau kemasan lain yang dibutuhkan untuk mengemas seluruh hasil 1 batch.</div>
+                    ${mode === "per_package" ? '<div class="helper-text">Jika membeli dalam paket, aplikasi akan otomatis membulatkan kebutuhan ke jumlah paket penuh.</div>' : ""}
                 </div>
             `
         );
