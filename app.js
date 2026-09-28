@@ -11,6 +11,98 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const STORAGE_KEY = "hppCalculatorState";
 
+    // Tarif acuan listrik UMKM yang digunakan aplikasi.
+    // User memilih golongan; tarif otomatis diambil dari daftar ini.
+    // Acuan tarif: PLN/ESDM Q3 2026 (Juli-September 2026).
+    const ELECTRICITY_TARIFF_OPTIONS = [
+        {
+            id: "R1_450_SUBSIDIZED",
+            group: "R",
+            label: "R-1/TR — 450 VA (Subsidi)",
+            tariff: 415
+        },
+        {
+            id: "R1_900_SUBSIDIZED",
+            group: "R",
+            label: "R-1/TR — 900 VA (Subsidi)",
+            tariff: 605
+        },
+        {
+            id: "R1_900_NON_SUBSIDIZED",
+            group: "R",
+            label: "R-1/TR — 900 VA (Nonsubsidi)",
+            tariff: 1352
+        },
+        {
+            id: "R1_1300",
+            group: "R",
+            label: "R-1/TR — 1.300 VA",
+            tariff: 1444.70
+        },
+        {
+            id: "R1_2200",
+            group: "R",
+            label: "R-1/TR — 2.200 VA",
+            tariff: 1444.70
+        },
+        {
+            id: "R2_3500_5500",
+            group: "R",
+            label: "R-2/TR — 3.500–5.500 VA",
+            tariff: 1699.53
+        },
+        {
+            id: "R3_6600_PLUS",
+            group: "R",
+            label: "R-3/TR — ≥6.600 VA",
+            tariff: 1699.53
+        },
+        {
+            id: "B1_1300",
+            group: "B",
+            label: "B-1/TR — 1.300 VA",
+            tariff: 966
+        },
+        {
+            id: "B1_2200_5500",
+            group: "B",
+            label: "B-1/TR — 2.200–5.500 VA",
+            tariff: 1100
+        },
+        {
+            id: "B2_6600_200K",
+            group: "B",
+            label: "B-2/TR — 6.600 VA–200 kVA",
+            tariff: 1444.70
+        }
+    ];
+
+    const DEFAULT_ELECTRICITY_CLASS = "R1_1300";
+
+    // Mengambil tarif berdasarkan ID golongan listrik.
+    function getElectricityTariff(classId) {
+        const option = ELECTRICITY_TARIFF_OPTIONS.find(function (item) {
+            return item.id === classId;
+        });
+
+        return option
+            ? option.tariff
+            : ELECTRICITY_TARIFF_OPTIONS.find(function (item) {
+                return item.id === DEFAULT_ELECTRICITY_CLASS;
+            }).tariff;
+    }
+
+    // Mengambil ID golongan dari tarif lama agar data localStorage versi sebelumnya tetap terbaca.
+    function inferElectricityClass(tariff) {
+        const numericTariff = Number(tariff);
+
+        const option = ELECTRICITY_TARIFF_OPTIONS.find(function (item) {
+            return Math.abs(item.tariff - numericTariff) < 0.01;
+        });
+
+        return option ? option.id : DEFAULT_ELECTRICITY_CLASS;
+    }
+
     const defaultState = {
     product: {
         name: "",
@@ -2081,10 +2173,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         detailedAdditionalCostFields.innerHTML = `
             <div class="detailed-editor">
-                <p class="helper-text">
-                    Nilai Simple tetap disimpan, tetapi tidak digunakan saat Detailed aktif.
-                </p>
-
                 <div class="detailed-component-list">
                     ${renderDetailedComponentRows()}
                 </div>
@@ -2364,6 +2452,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (type === "electricity") {
+            const selectedClass = value(
+                "electricityClass",
+                inferElectricityClass(value("tariffPerKwh", getElectricityTariff(DEFAULT_ELECTRICITY_CLASS)))
+            );
+            const selectedTariff = getElectricityTariff(selectedClass);
+
             container.innerHTML = `
                 <div class="detailed-form-box">
                     <div class="form-group">
@@ -2379,12 +2473,49 @@ document.addEventListener("DOMContentLoaded", function () {
                         <input type="number" id="electricityDurationInput" min="0" step="any" inputmode="decimal" value="${value("durationHours")}" placeholder="Contoh: 1.5">
                     </div>
                     <div class="form-group">
-                        <label for="electricityTariffInput">Tarif listrik (Rp/kWh)</label>
-                        <input type="number" id="electricityTariffInput" min="0" step="any" inputmode="decimal" value="${value("tariffPerKwh")}" placeholder="Contoh: 1500">
+                        <label for="electricityClassInput">Golongan listrik</label>
+                        <select id="electricityClassInput">
+                            <optgroup label="Rumah Tangga (R)">
+                                ${ELECTRICITY_TARIFF_OPTIONS.filter(function (option) { return option.group === "R"; }).map(function (option) {
+                                    return `<option value="${option.id}" ${option.id === selectedClass ? "selected" : ""}>${option.label}</option>`;
+                                }).join("")}
+                            </optgroup>
+                            <optgroup label="Bisnis (B)">
+                                ${ELECTRICITY_TARIFF_OPTIONS.filter(function (option) { return option.group === "B"; }).map(function (option) {
+                                    return `<option value="${option.id}" ${option.id === selectedClass ? "selected" : ""}>${option.label}</option>`;
+                                }).join("")}
+                            </optgroup>
+                        </select>
                     </div>
-                    <div class="calculation-preview">Biaya listrik: <strong>${formatRupiah(calculateElectricityCost(data))}</strong></div>
+                    <div class="form-group">
+                        <label for="electricityTariffInput">Tarif yang digunakan</label>
+                        <input type="text" id="electricityTariffInput" value="${formatRupiah(selectedTariff)}/kWh" readonly aria-readonly="true">
+                        <div class="helper-text">Tarif acuan aplikasi: Juli–September 2026. Jika tarif PLN berubah, beri tahu kami agar tarif aplikasi dapat diperbarui.</div>
+                    </div>
+                    <div class="calculation-preview">Biaya listrik: <strong>${formatRupiah(calculateElectricityCost({ ...data, tariffPerKwh: selectedTariff }))}</strong></div>
                 </div>
             `;
+
+            const classInput = document.getElementById("electricityClassInput");
+            const tariffInput = document.getElementById("electricityTariffInput");
+
+            if (classInput) {
+                classInput.addEventListener("change", function () {
+                    const tariff = getElectricityTariff(classInput.value);
+
+                    if (tariffInput) {
+                        tariffInput.value = `${formatRupiah(tariff)}/kWh`;
+                    }
+
+                    const preview = container.querySelector(".calculation-preview strong");
+                    if (preview) {
+                        preview.textContent = formatRupiah(
+                            calculateElectricityCost({ ...data, tariffPerKwh: tariff })
+                        );
+                    }
+                });
+            }
+
             return;
         }
 
@@ -2513,15 +2644,21 @@ document.addEventListener("DOMContentLoaded", function () {
             detailed.gas = item;
 
         } else if (type === "electricity") {
+            const electricityClass =
+                document.getElementById("electricityClassInput")?.value || DEFAULT_ELECTRICITY_CLASS;
+
+            const tariffPerKwh = getElectricityTariff(electricityClass);
+
             item = {
                 applianceName: document.getElementById("electricityApplianceInput")?.value.trim() || "Peralatan listrik",
                 watt: Number(document.getElementById("electricityWattInput")?.value) || 0,
                 durationHours: Number(document.getElementById("electricityDurationInput")?.value) || 0,
-                tariffPerKwh: Number(document.getElementById("electricityTariffInput")?.value) || 0
+                electricityClass,
+                tariffPerKwh
             };
 
             if (item.watt <= 0 || item.durationHours <= 0 || item.tariffPerKwh <= 0) {
-                alert("Lengkapi nama peralatan, daya, durasi, dan tarif listrik.");
+                alert("Lengkapi nama peralatan, daya, dan durasi pemakaian.");
                 return;
             }
 
