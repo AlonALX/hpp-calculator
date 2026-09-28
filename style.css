@@ -324,6 +324,20 @@ input::placeholder {
 
 
 /* ========================================
+   GLOBAL HIDDEN STATE
+======================================== */
+
+/*
+ * Menyembunyikan elemen yang sedang tidak aktif.
+ * Dipakai untuk pergantian mode Simple/Detailed
+ * tanpa menghapus nilai yang tersimpan.
+ */
+.hidden {
+    display: none !important;
+}
+
+
+/* ========================================
    MODAL
 ======================================== */
 
