@@ -1188,43 +1188,49 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     <div class="ingredient-main">
 
-                        <div>
-
-                            <div
-                                class="ingredient-name-display"
-                            >
-                                ${escapeHtml(
-                                    ingredient.name
-                                )}
-                            </div>
-
-                            <div
-                                class="ingredient-usage-display"
-                            >
-                                Digunakan:
-                                ${formatNumber(
-                                    ingredient.usageQuantity
-                                )}
-                                ${escapeHtml(
-                                    ingredient.usageUnit
-                                )}
-                            </div>
-
-                            <div
-                                class="ingredient-cost-display"
-                            >
-                                ${formatRupiah(cost)}
-                            </div>
-
+                        <div class="ingredient-name-display">
+                            ${escapeHtml(ingredient.name)}
                         </div>
 
-                        <button
-                            type="button"
-                            class="ingredient-edit-button"
-                            data-id="${ingredient.id}"
-                        >
-                            Edit
-                        </button>
+                        <div class="ingredient-usage-display">
+                            ${formatNumber(ingredient.usageQuantity)} ${escapeHtml(ingredient.usageUnit)}
+                        </div>
+
+                        <div class="ingredient-cost-display">
+                            ${formatRupiah(cost)}
+                        </div>
+
+                        <div class="ingredient-actions">
+
+                            <button
+                                type="button"
+                                class="ingredient-icon-button ingredient-edit-button"
+                                data-id="${ingredient.id}"
+                                aria-label="Edit ${escapeHtml(ingredient.name)}"
+                                title="Edit bahan"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 20h9"/>
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                                </svg>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="ingredient-icon-button ingredient-delete-button"
+                                data-id="${ingredient.id}"
+                                aria-label="Hapus ${escapeHtml(ingredient.name)}"
+                                title="Hapus bahan"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M3 6h18"/>
+                                    <path d="M8 6V4h8v2"/>
+                                    <path d="M19 6l-1 14H6L5 6"/>
+                                    <path d="M10 11v5M14 11v5"/>
+                                </svg>
+                            </button>
+
+                        </div>
 
                     </div>
 
@@ -1257,6 +1263,28 @@ document.addEventListener("DOMContentLoaded", function () {
                         function () {
 
                             openEditIngredientModal(
+                                button.dataset.id
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+        ingredientsDisplay
+            .querySelectorAll(
+                ".ingredient-delete-button"
+            )
+            .forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            deleteIngredientById(
                                 button.dataset.id
                             );
 
@@ -2143,6 +2171,52 @@ document.addEventListener("DOMContentLoaded", function () {
             null;
 
 
+        renderApp();
+
+    }
+
+
+    // ========================================
+    // DELETE INGREDIENT FROM LIST
+    // ========================================
+
+    // Opens the same confirmation flow used by the ingredient modal.
+    function deleteIngredientById(id) {
+
+        const ingredient =
+            state.ingredients.find(
+                function (item) {
+
+                    return String(item.id) === String(id);
+
+                }
+            );
+
+        if (!ingredient) {
+            return;
+        }
+
+        const confirmed =
+            confirm(
+                "Hapus bahan " +
+                ingredient.name +
+                "?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        state.ingredients =
+            state.ingredients.filter(
+                function (item) {
+
+                    return String(item.id) !== String(id);
+
+                }
+            );
+
+        saveState();
         renderApp();
 
     }

@@ -108,9 +108,75 @@ button {
 .section-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
+    margin: -20px -20px 18px;
+    padding: 13px 16px;
+    border-radius: var(--radius-lg) var(--radius-lg) 14px 14px;
+    background: var(--primary-soft);
+}
+
+.product-card .section-header {
+    background: #eeebff;
+}
+
+.ingredients-card .section-header {
+    background: #eaf5ff;
+}
+
+.costs-card .section-header {
+    background: #fff5e8;
+}
+
+.result-card {
+    overflow: hidden;
+}
+
+.result-card > .section-label,
+.result-card > h2,
+.pricing-card > .section-label,
+.pricing-card > h2 {
+    display: block;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.result-card > .section-label,
+.result-card > h2 {
+    background: #eaf8f1;
+}
+
+.result-card > .section-label {
+    margin-top: -20px;
+    padding-top: 16px;
+}
+
+.result-card > h2 {
+    margin-top: 0;
     margin-bottom: 16px;
+    padding-bottom: 14px;
+}
+
+.pricing-card {
+    overflow: hidden;
+}
+
+.pricing-card > .section-label,
+.pricing-card > h2 {
+    background: #f0efff;
+}
+
+.pricing-card > .section-label {
+    margin-top: -20px;
+    padding-top: 16px;
+}
+
+.pricing-card > h2 {
+    margin-top: 0;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
 }
 
 .section-label {
@@ -239,7 +305,10 @@ button {
     justify-content: space-between;
     align-items: center;
     gap: 14px;
-    padding: 2px 0;
+    padding: 16px 18px;
+    background: var(--primary-soft);
+    border: 1px solid #e4e1ff;
+    border-radius: 16px;
 }
 
 .product-name {
@@ -290,29 +359,74 @@ button {
 }
 
 .ingredient-main {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
 }
 
 .ingredient-name-display {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: var(--text);
     font-size: 14px;
     font-weight: 700;
 }
 
 .ingredient-usage-display {
-    margin-top: 3px;
     color: var(--text-soft);
     font-size: 12px;
+    white-space: nowrap;
 }
 
 .ingredient-cost-display {
-    margin-top: 4px;
     color: var(--text);
     font-size: 14px;
     font-weight: 750;
+    white-space: nowrap;
+}
+
+.ingredient-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.ingredient-icon-button {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--text-soft);
+    cursor: pointer;
+}
+
+.ingredient-icon-button:hover {
+    background: var(--neutral-soft);
+    color: var(--primary);
+}
+
+.ingredient-icon-button svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.ingredient-delete-button:hover {
+    color: var(--danger);
+    background: var(--danger-soft);
 }
 
 /* ========================================
@@ -787,8 +901,44 @@ input::placeholder {
         gap: 0;
     }
 
+    .section-header {
+        margin: -17px -17px 16px;
+    }
+
+    .result-card > .section-label,
+    .result-card > h2,
+    .pricing-card > .section-label,
+    .pricing-card > h2 {
+        margin-left: -17px;
+        margin-right: -17px;
+        padding-left: 17px;
+        padding-right: 17px;
+    }
+
+    .result-card > .section-label,
+    .pricing-card > .section-label {
+        margin-top: -17px;
+    }
+
     .product-display-card {
         align-items: flex-start;
+    }
+
+    .ingredient-main {
+        gap: 7px;
+    }
+
+    .ingredient-name-display {
+        font-size: 13px;
+    }
+
+    .ingredient-cost-display {
+        font-size: 13px;
+    }
+
+    .ingredient-icon-button {
+        width: 30px;
+        height: 30px;
     }
 
     .product-name {
