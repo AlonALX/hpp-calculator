@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
          * additionalCost: 10000
          *
          * Nilai tersebut dipindahkan
-         * menjadi Simple Mode.
+         * menjadi Mode Sederhana.
          */
         let additionalCosts;
 
@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const state =
         loadState();
 
-    // Menjamin struktur Detailed selalu lengkap untuk data lama/localStorage lama.
+    // Menjamin struktur Rinci selalu lengkap untuk data lama/localStorage lama.
     state.additionalCosts = state.additionalCosts || {};
     state.additionalCosts.mode =
         state.additionalCosts.mode === "detailed"
@@ -274,7 +274,7 @@ document.addEventListener("DOMContentLoaded", function () {
     state.additionalCosts.detailed.labor =
         state.additionalCosts.detailed.labor || null;
 
-    // Menjamin konfigurasi Selling Price Assistant selalu memiliki nilai valid.
+    // Menjamin konfigurasi Asisten Harga Jual selalu memiliki nilai valid.
     state.pricingAssistant = state.pricingAssistant || {};
     state.pricingAssistant.targetMargin =
         Number.isFinite(Number(state.pricingAssistant.targetMargin))
@@ -860,8 +860,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Mengambil rincian biaya Detailed beserta total masing-masing komponen.
-    function getDetailedCostBreakdown() {
+    // Mengambil rincian biaya Rinci beserta total masing-masing komponen.
+    function getRinciCostBreakdown() {
 
         const detailed =
             state.additionalCosts?.detailed || {};
@@ -903,7 +903,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Mengambil biaya tambahan yang aktif. Mode Simple dan Detailed tidak pernah dijumlahkan.
+    // Mengambil biaya tambahan yang aktif. Mode Simple dan Rinci tidak pernah dijumlahkan.
     function getActiveAdditionalCost() {
 
         const additionalCosts =
@@ -914,7 +914,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (additionalCosts.mode === "detailed") {
-            return getDetailedCostBreakdown().total;
+            return getRinciCostBreakdown().total;
         }
 
         return Number(
@@ -1101,7 +1101,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     class="edit-text-button"
                     id="productDisplayEditButton"
                 >
-                    Edit
+                    Ubah
                 </button>
 
             </div>
@@ -1214,8 +1214,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                 type="button"
                                 class="ingredient-icon-button ingredient-edit-button"
                                 data-id="${ingredient.id}"
-                                aria-label="Edit ${escapeHtml(ingredient.name)}"
-                                title="Edit bahan"
+                                aria-label="Ubah ${escapeHtml(ingredient.name)}"
+                                title="Ubah bahan"
                             >
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
                                     <path d="M12 20h9"/>
@@ -1321,7 +1321,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const simpleTotal =
             Number(additionalCosts.simple?.total) || 0;
 
-        const breakdown = getDetailedCostBreakdown();
+        const breakdown = getRinciCostBreakdown();
 
         if (additionalCosts.mode === "simple") {
 
@@ -1340,11 +1340,11 @@ document.addEventListener("DOMContentLoaded", function () {
             additionalCostDisplay.innerHTML = `
                 <div class="cost-mode-card">
                     <div>
-                        <div class="ingredient-name-display">Simple</div>
+                        <div class="ingredient-name-display">Sederhana</div>
                         <div class="ingredient-usage-display">Total biaya tambahan</div>
                         <div class="ingredient-cost-display">${formatRupiah(simpleTotal)}</div>
                     </div>
-                    <button type="button" class="edit-text-button" id="editAdditionalCostButton">Edit</button>
+                    <button type="button" class="edit-text-button" id="editAdditionalCostButton">Ubah</button>
                 </div>
             `;
 
@@ -1392,10 +1392,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="detailed-summary-card">
                     <div class="detailed-summary-header">
                         <div>
-                            <div class="ingredient-name-display">Detailed / Guided</div>
+                            <div class="ingredient-name-display">Rinci / Terpandu</div>
                             <div class="ingredient-usage-display">Rincian biaya produksi</div>
                         </div>
-                        <button type="button" class="edit-text-button" id="editAdditionalCostButton">Edit</button>
+                        <button type="button" class="edit-text-button" id="editAdditionalCostButton">Ubah</button>
                     </div>
                     <div class="detailed-summary-list">
                         ${rows.length ? rows.join("") : '<div class="helper-text">Belum ada komponen biaya.</div>'}
@@ -1482,7 +1482,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ========================================
-    // SELLING PRICE ASSISTANT
+    // ASISTEN HARGA JUAL
     // ========================================
 
     // Menghitung harga jual dari target gross margin.
@@ -1555,17 +1555,17 @@ document.addEventListener("DOMContentLoaded", function () {
     // Menentukan status promo berdasarkan profit setelah diskon.
     function getPromoStatus(profit) {
         if (profit > 0) {
-            return { label: "🟢 Masih profit", className: "profit" };
+            return { label: "🟢 Masih untung", className: "profit" };
         }
 
         if (Math.abs(profit) < 0.005) {
-            return { label: "⚪ Break-even", className: "break-even" };
+            return { label: "⚪ Impas", className: "break-even" };
         }
 
         return { label: "🔴 Rugi", className: "loss" };
     }
 
-    // Merender seluruh Selling Price Assistant berdasarkan HPP saat ini.
+    // Merender seluruh Asisten Harga Jual berdasarkan HPP saat ini.
     function renderPricingAssistant() {
         const hpp = getHppPerUnit();
         const targetMargin = Number(state.pricingAssistant.targetMargin) || 0;
@@ -1605,7 +1605,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (maximumDiscountProfitElement) maximumDiscountProfitElement.textContent = `${maxProfitDiscount.toFixed(1)}%`;
     }
 
-    // Menyimpan perubahan input Selling Price Assistant ke localStorage.
+    // Menyimpan perubahan input Asisten Harga Jual ke localStorage.
     function updatePricingState() {
         if (targetMarginInput) {
             state.pricingAssistant.targetMargin = Math.min(99, Math.max(0, Number(targetMarginInput.value) || 0));
@@ -1697,7 +1697,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         productModalTitle.textContent =
-            "Edit Produk";
+            "Ubah Produk";
 
 
         productNameInput.value =
@@ -1881,7 +1881,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         ingredientModalTitle.textContent =
-            "Edit Bahan";
+            "Ubah Bahan";
 
 
         ingredientNameInput.value =
@@ -2330,7 +2330,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Membuka modal edit dengan data Simple/Detailed yang tersimpan.
+    // Membuka modal edit dengan data Simple/Rinci yang tersimpan.
     function openEditAdditionalCostModal() {
 
         if (!additionalCostModal) {
@@ -2368,7 +2368,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Mengubah tampilan Simple/Detailed sesuai pilihan user.
+    // Mengubah tampilan Simple/Rinci sesuai pilihan user.
     function updateAdditionalCostModeUI() {
 
         if (!additionalCostModeInput) {
@@ -2394,14 +2394,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (mode === "detailed") {
-            renderDetailedCostEditor();
+            renderRinciCostEditor();
         }
 
     }
 
 
-    // Menampilkan daftar komponen Detailed dan form untuk menambah/mengedit komponen.
-    function renderDetailedCostEditor(editType = null, editIndex = null) {
+    // Menampilkan daftar komponen Rinci dan form untuk menambah/mengedit komponen.
+    function renderRinciCostEditor(editType = null, editIndex = null) {
 
         if (!detailedAdditionalCostFields) {
             return;
@@ -2413,7 +2413,7 @@ document.addEventListener("DOMContentLoaded", function () {
         detailedAdditionalCostFields.innerHTML = `
             <div class="detailed-editor">
                 <div class="detailed-component-list">
-                    ${renderDetailedComponentRows()}
+                    ${renderRinciComponentRows()}
                 </div>
 
                 <div class="form-group detailed-add-form-group">
@@ -2430,7 +2430,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 <button
                     type="button"
-                    id="saveDetailedComponentButton"
+                    id="saveRinciComponentButton"
                     class="button primary detailed-save-component-button"
                 >
                     ${editType ? "Simpan Perubahan" : "Tambah Komponen"}
@@ -2438,7 +2438,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 <div class="detailed-total-preview">
                     <span>Total Biaya Tambahan</span>
-                    <strong>${formatRupiah(getDetailedCostBreakdown().total)}</strong>
+                    <strong>${formatRupiah(getRinciCostBreakdown().total)}</strong>
                 </div>
 
                 <button
@@ -2446,7 +2446,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     id="switchToSimpleButton"
                     class="button secondary detailed-switch-button"
                 >
-                    Ganti ke Simple
+                    Ganti ke Sederhana
                 </button>
             </div>
         `;
@@ -2458,7 +2458,7 @@ document.addEventListener("DOMContentLoaded", function () {
             typeInput.value = editType;
         }
 
-        renderDetailedComponentForm(
+        renderRinciComponentForm(
             editType || (typeInput ? typeInput.value : "gas"),
             editIndex
         );
@@ -2467,7 +2467,7 @@ document.addEventListener("DOMContentLoaded", function () {
             typeInput.addEventListener(
                 "change",
                 function () {
-                    renderDetailedComponentForm(
+                    renderRinciComponentForm(
                         typeInput.value,
                         null
                     );
@@ -2476,13 +2476,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const saveButton =
-            document.getElementById("saveDetailedComponentButton");
+            document.getElementById("saveRinciComponentButton");
 
         if (saveButton) {
             saveButton.addEventListener(
                 "click",
                 function () {
-                    saveDetailedComponent(
+                    saveRinciComponent(
                         typeInput ? typeInput.value : "gas",
                         editIndex
                     );
@@ -2512,7 +2512,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     button.addEventListener(
                         "click",
                         function () {
-                            renderDetailedCostEditor(
+                            renderRinciCostEditor(
                                 button.dataset.detailedEdit,
                                 button.dataset.detailedIndex === ""
                                     ? null
@@ -2530,7 +2530,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     button.addEventListener(
                         "click",
                         function () {
-                            deleteDetailedComponent(
+                            deleteRinciComponent(
                                 button.dataset.detailedDelete,
                                 button.dataset.detailedIndex === ""
                                     ? null
@@ -2544,8 +2544,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Membuat baris ringkasan untuk setiap komponen Detailed yang sudah tersimpan.
-    function renderDetailedComponentRows() {
+    // Membuat baris ringkasan untuk setiap komponen Rinci yang sudah tersimpan.
+    function renderRinciComponentRows() {
 
         const detailed =
             state.additionalCosts.detailed;
@@ -2561,7 +2561,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="helper-text">${formatRupiah(cost)}</div>
                     </div>
                     <div class="detailed-component-actions">
-                        <button type="button" class="edit-text-button" data-detailed-edit="gas" data-detailed-index="">Edit</button>
+                        <button type="button" class="edit-text-button" data-detailed-edit="gas" data-detailed-index="">Ubah</button>
                         <button type="button" class="edit-text-button danger-text" data-detailed-delete="gas" data-detailed-index="">Hapus</button>
                     </div>
                 </div>
@@ -2577,7 +2577,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div class="helper-text">${escapeHtml(item.applianceName || "Peralatan")} · ${formatRupiah(calculateElectricityCost(item))}</div>
                         </div>
                         <div class="detailed-component-actions">
-                            <button type="button" class="edit-text-button" data-detailed-edit="electricity" data-detailed-index="${index}">Edit</button>
+                            <button type="button" class="edit-text-button" data-detailed-edit="electricity" data-detailed-index="${index}">Ubah</button>
                             <button type="button" class="edit-text-button danger-text" data-detailed-delete="electricity" data-detailed-index="${index}">Hapus</button>
                         </div>
                     </div>
@@ -2594,7 +2594,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div class="helper-text">${escapeHtml(item.name || "Kemasan")} · ${formatRupiah(calculatePackagingCost(item))}</div>
                         </div>
                         <div class="detailed-component-actions">
-                            <button type="button" class="edit-text-button" data-detailed-edit="packaging" data-detailed-index="${index}">Edit</button>
+                            <button type="button" class="edit-text-button" data-detailed-edit="packaging" data-detailed-index="${index}">Ubah</button>
                             <button type="button" class="edit-text-button danger-text" data-detailed-delete="packaging" data-detailed-index="${index}">Hapus</button>
                         </div>
                     </div>
@@ -2611,7 +2611,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="helper-text">${formatRupiah(cost)}</div>
                     </div>
                     <div class="detailed-component-actions">
-                        <button type="button" class="edit-text-button" data-detailed-edit="labor" data-detailed-index="">Edit</button>
+                        <button type="button" class="edit-text-button" data-detailed-edit="labor" data-detailed-index="">Ubah</button>
                         <button type="button" class="edit-text-button danger-text" data-detailed-delete="labor" data-detailed-index="">Hapus</button>
                     </div>
                 </div>
@@ -2625,8 +2625,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Menampilkan field input sesuai jenis komponen Detailed yang dipilih.
-    function renderDetailedComponentForm(type, editIndex = null) {
+    // Menampilkan field input sesuai jenis komponen Rinci yang dipilih.
+    function renderRinciComponentForm(type, editIndex = null) {
 
         const container =
             document.getElementById("detailedComponentForm");
@@ -2854,8 +2854,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Membaca field komponen Detailed dan menyimpannya ke state tanpa menghapus komponen lain.
-    function saveDetailedComponent(type, editIndex = null) {
+    // Membaca field komponen Rinci dan menyimpannya ke state tanpa menghapus komponen lain.
+    function saveRinciComponent(type, editIndex = null) {
 
         const detailed =
             state.additionalCosts.detailed;
@@ -2964,8 +2964,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Menghapus satu komponen Detailed tanpa memengaruhi komponen lainnya.
-    function deleteDetailedComponent(type, index = null) {
+    // Menghapus satu komponen Rinci tanpa memengaruhi komponen lainnya.
+    function deleteRinciComponent(type, index = null) {
 
         if (!confirm("Hapus komponen biaya ini?")) {
             return;
@@ -2993,7 +2993,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Menyimpan mode Simple/Detailed. Nilai mode yang tidak aktif tetap dipertahankan.
+    // Menyimpan mode Simple/Rinci. Nilai mode yang tidak aktif tetap dipertahankan.
     function saveAdditionalCost() {
 
         const mode =
@@ -3276,7 +3276,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ========================================
-    // SELLING PRICE ASSISTANT EVENTS
+    // ASISTEN HARGA JUAL EVENTS
     // ========================================
 
     if (openDiscountSimulatorButton) {

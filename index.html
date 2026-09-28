@@ -67,7 +67,7 @@
                     type="button"
                     id="editProductButton"
                     class="icon-button"
-                    aria-label="Edit produk"
+                    aria-label="Ubah produk"
                 >
                     ✎
                 </button>
@@ -202,9 +202,9 @@
                     </strong>
 
                     <p>
-                        Gas, listrik, packaging,
-                        dan labor dapat ditambahkan
-                        nanti.
+                        Gas, listrik, kemasan,
+                        dan tenaga kerja dapat ditambahkan
+                        di sini.
                     </p>
 
                 </div>
@@ -306,16 +306,16 @@
 
 
         <!-- ================================= -->
-        <!-- SELLING PRICE ASSISTANT -->
+        <!-- ASISTEN HARGA JUAL -->
         <!-- ================================= -->
 
         <section class="card pricing-card">
 
             <span class="section-label">HARGA JUAL</span>
-            <h2>Selling Price Assistant</h2>
+            <h2>Asisten Harga Jual</h2>
 
             <div class="form-group">
-                <label for="targetMarginInput">Target gross margin (%)</label>
+                <label for="targetMarginInput">Target margin keuntungan (%)</label>
                 <input
                     type="number"
                     id="targetMarginInput"
@@ -325,7 +325,7 @@
                     inputmode="decimal"
                     value="40"
                 >
-                <div class="helper-text">Margin dihitung dari harga jual, bukan markup.</div>
+                <div class="helper-text">Margin dihitung dari harga jual, bukan dari kenaikan harga atas HPP.</div>
             </div>
 
             <div class="result-box">
@@ -334,11 +334,11 @@
                     <strong id="suggestedPrice">Rp0</strong>
                 </div>
                 <div class="result-item">
-                    <span>Estimasi profit / unit</span>
+                    <span>Perkiraan keuntungan / unit</span>
                     <strong id="suggestedProfit">Rp0</strong>
                 </div>
                 <div class="result-item">
-                    <span>Gross margin</span>
+                    <span>Margin keuntungan</span>
                     <strong id="suggestedMargin">0%</strong>
                 </div>
             </div>
@@ -352,7 +352,7 @@
                     <span class="pricing-action-icon">% </span>
                     <span class="pricing-action-copy">
                         <strong>Simulasi Diskon</strong>
-                        <small>Lihat dampak diskon terhadap profit</small>
+                        <small>Lihat dampak diskon terhadap keuntungan</small>
                     </span>
                     <span class="pricing-action-arrow">›</span>
                 </button>
@@ -375,7 +375,7 @@
 
 
     <!-- ================================= -->
-    <!-- DISCOUNT SIMULATOR MODAL -->
+    <!-- MODAL SIMULASI DISKON -->
     <!-- ================================= -->
 
     <div id="discountSimulatorModal" class="modal hidden">
@@ -396,14 +396,14 @@
 
                 <div class="pricing-metrics">
                     <div class="result-item"><span>Harga setelah diskon</span><strong id="promoFinalPrice">Rp0</strong></div>
-                    <div class="result-item"><span>Profit / unit</span><strong id="promoProfit">Rp0</strong></div>
+                    <div class="result-item"><span>Keuntungan / unit</span><strong id="promoProfit">Rp0</strong></div>
                     <div class="result-item"><span>Margin</span><strong id="promoMargin">0%</strong></div>
                 </div>
 
-                <div id="promoStatus" class="pricing-status break-even">⚪ Break-even</div>
+                <div id="promoStatus" class="pricing-status break-even">⚪ Impas</div>
 
                 <div class="result-item pricing-break-even">
-                    <span>Break-even price</span>
+                    <span>Harga impas</span>
                     <strong id="breakEvenPrice">Rp0</strong>
                 </div>
             </div>
@@ -411,7 +411,7 @@
     </div>
 
     <!-- ================================= -->
-    <!-- MAXIMUM DISCOUNT MODAL -->
+    <!-- MODAL DISKON MAKSIMUM -->
     <!-- ================================= -->
 
     <div id="maximumDiscountModal" class="modal hidden">
@@ -426,13 +426,13 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="minimumMarginInput">Minimum margin yang ingin dipertahankan (%)</label>
+                    <label for="minimumMarginInput">Minimum margin keuntungan yang ingin dipertahankan (%)</label>
                     <input type="number" id="minimumMarginInput" min="0" max="99" step="1" inputmode="decimal" value="0">
                     <div class="result-item compact-result"><span>Diskon maksimum</span><strong id="maximumDiscountMargin">0%</strong></div>
                 </div>
 
                 <div class="form-group maximum-profit-group">
-                    <label for="minimumProfitInput">Minimum profit / unit yang ingin dipertahankan</label>
+                    <label for="minimumProfitInput">Minimum keuntungan / unit yang ingin dipertahankan</label>
                     <input type="number" id="minimumProfitInput" min="0" step="100" inputmode="numeric" value="0">
                     <div class="result-item compact-result"><span>Diskon maksimum</span><strong id="maximumDiscountProfit">0%</strong></div>
                 </div>
@@ -441,7 +441,7 @@
     </div>
 
     <!-- ================================= -->
-    <!-- PRODUCT MODAL -->
+    <!-- MODAL PRODUK -->
     <!-- ================================= -->
 
     <div
@@ -559,7 +559,7 @@
 
 
     <!-- ================================= -->
-    <!-- INGREDIENT MODAL -->
+    <!-- MODAL BAHAN -->
     <!-- ================================= -->
 
     <div
@@ -803,7 +803,7 @@
 
 
     <!-- ================================= -->
-    <!-- ADDITIONAL COST MODAL -->
+    <!-- MODAL BIAYA TAMBAHAN -->
     <!-- ================================= -->
 
     <div
@@ -843,11 +843,11 @@
                     <select id="additionalCostModeInput">
 
                         <option value="simple">
-                            Simple
+                            Sederhana
                         </option>
 
                         <option value="detailed">
-                            Detailed / Guided
+                            Rinci / Terpandu
                         </option>
 
                     </select>
@@ -891,7 +891,7 @@
                     <div class="detailed-mode-placeholder">
 
                         <strong>
-                            Detailed / Guided
+                            Rinci / Terpandu
                         </strong>
 
                     </div>
